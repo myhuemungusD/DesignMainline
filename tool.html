@@ -36,6 +36,19 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 
 /* HERO STRIP */
 .tool-hero{padding:3rem 2rem 1.5rem;text-align:center;border-bottom:1px solid var(--border);position:relative}
+.tool-hero.compact{padding:1.1rem 2rem 1.1rem;text-align:left}
+.tool-hero.compact .hero-row{display:flex;align-items:center;gap:1.2rem;max-width:1200px;margin:0 auto;position:relative;z-index:2}
+.tool-hero.compact .hero-text{flex:1;min-width:0}
+.tool-hero.compact .tool-title{font-size:clamp(1.15rem,2vw,1.55rem);margin-bottom:.25rem;line-height:1.2}
+.tool-hero.compact .tool-sub{font-size:.78rem;max-width:none;margin:0;line-height:1.5}
+.ig-mark-sm{flex-shrink:0}
+.ig-mark-sm svg{width:54px;height:54px;display:block;filter:drop-shadow(0 4px 14px rgba(255,138,61,.22))}
+.ig-tagline-inline{font-family:'Cinzel',serif;font-style:italic;color:var(--gold);font-size:.78rem;letter-spacing:.06em}
+@media(max-width:600px){
+  .tool-hero.compact{padding:.9rem 1rem}
+  .tool-hero.compact .hero-row{gap:.8rem}
+  .ig-mark-sm svg{width:40px;height:40px}
+}
 .tool-hero .hero-glow{position:absolute;width:560px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.06) 0%,transparent 65%);top:0;left:50%;transform:translate(-50%,-25%);pointer-events:none}
 .tool-badge{display:inline-flex;align-items:center;gap:.6rem;padding:.4rem 1.2rem;border:1px solid var(--border-strong);border-radius:100px;font-size:.62rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
 .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2.5s ease-in-out infinite}
@@ -206,6 +219,23 @@ footer a{color:var(--gold);text-decoration:none}
   .sidebar{padding:1.25rem 1rem}
   .main{padding:1.25rem 1rem}
 }
+
+/* INFO TABS (below tool) */
+.info-section{border-top:1px solid var(--border);background:var(--surface);padding:0 2rem 2rem}
+.tab-nav{display:flex;gap:0;border-bottom:1px solid var(--border);margin:0 -2rem 1.6rem;padding:0 2rem;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;padding:1rem 1.2rem;cursor:pointer;transition:all .25s;white-space:nowrap;margin-bottom:-1px}
+.tab-btn:hover{color:var(--white)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-pane{max-width:1200px;margin:0 auto;animation:tabFade .3s ease}
+.tab-pane[hidden]{display:none}
+@keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.pipeline-note{max-width:780px;margin:1.2rem auto 0;color:var(--muted);font-size:.82rem;line-height:1.7;text-align:center}
+@media(max-width:600px){
+  .info-section{padding:0 1rem 1.5rem}
+  .tab-nav{margin:0 -1rem 1.2rem;padding:0 1rem}
+  .tab-btn{padding:.85rem .8rem;font-size:.62rem;letter-spacing:.14em}
+}
 </style>
 </head>
 <body>
@@ -219,36 +249,27 @@ footer a{color:var(--gold);text-decoration:none}
   <a href="/" class="nav-back">← Back to Studio</a>
 </nav>
 
-<section class="tool-hero">
+<section class="tool-hero compact">
   <div class="hero-glow"></div>
-  <div class="ig-mark" aria-label="iGrinder">
-    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="igOrange" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#FF8A3D"/>
-          <stop offset="100%" stop-color="#E25A0F"/>
-        </linearGradient>
-      </defs>
-      <circle cx="60" cy="60" r="56" fill="#0F0F12" stroke="#1F1F22" stroke-width="2"/>
-      <path d="M78 36 A22 22 0 1 0 78 84 L78 64 L60 64 L60 72 L70 72 A14 14 0 1 1 70 48 L86 48 Z" fill="url(#igOrange)" stroke="#C24D08" stroke-width="0.5"/>
-      <circle cx="42" cy="38" r="4.5" fill="#F2ECE0"/>
-      <rect x="37.5" y="48" width="9" height="36" fill="#F2ECE0"/>
-    </svg>
-  </div>
-  <div class="tool-badge"><span class="badge-dot"></span> iGrinder · 2D → 3D STL Generator</div>
-  <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span></h1>
-  <div class="ig-tagline">Forging thoughts into reality</div>
-  <p class="tool-sub">Built by a maker, for makers. Drop a photo, logo, or sketch — get a clean STL ready to refine in Blender, slice in Cura, and print on your home 3D printer. Live preview is free. $9 unlocks the file.</p>
-  <div class="hero-pipeline">
-    <span class="pipe-step"><span class="pipe-num">01</span><span class="pipe-label">Image</span></span>
-    <span class="pipe-arrow">→</span>
-    <span class="pipe-step"><span class="pipe-num">02</span><span class="pipe-label">STL</span></span>
-    <span class="pipe-arrow">→</span>
-    <span class="pipe-step"><span class="pipe-num">03</span><span class="pipe-label">Blender</span></span>
-    <span class="pipe-arrow">→</span>
-    <span class="pipe-step"><span class="pipe-num">04</span><span class="pipe-label">Cura</span></span>
-    <span class="pipe-arrow">→</span>
-    <span class="pipe-step"><span class="pipe-num">05</span><span class="pipe-label">Print</span></span>
+  <div class="hero-row">
+    <div class="ig-mark-sm" aria-label="iGrinder">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="igOrange" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF8A3D"/>
+            <stop offset="100%" stop-color="#E25A0F"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="56" fill="#0F0F12" stroke="#1F1F22" stroke-width="2"/>
+        <path d="M78 36 A22 22 0 1 0 78 84 L78 64 L60 64 L60 72 L70 72 A14 14 0 1 1 70 48 L86 48 Z" fill="url(#igOrange)" stroke="#C24D08" stroke-width="0.5"/>
+        <circle cx="42" cy="38" r="4.5" fill="#F2ECE0"/>
+        <rect x="37.5" y="48" width="9" height="36" fill="#F2ECE0"/>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span></h1>
+      <p class="tool-sub"><span class="ig-tagline-inline">Forging thoughts into reality</span> · Drop an image, get a clean STL — refine in Blender, slice in Cura, print at home. Live preview free, $9 unlocks the file.</p>
+    </div>
   </div>
 </section>
 
@@ -392,7 +413,19 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="stat"><div class="label">STL Size</div><div class="value" id="statSize">—</div></div>
       <div class="stat"><div class="label">Print Volume</div><div class="value gold" id="statVol">—</div></div>
     </div>
+  </main>
+</div>
 
+<!-- TABBED INFO SECTION -->
+<section class="info-section">
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" data-tab="about" role="tab" aria-selected="true">About iGrinder</button>
+    <button class="tab-btn" data-tab="examples" role="tab" aria-selected="false">What You Can Make</button>
+    <button class="tab-btn" data-tab="workflow" role="tab" aria-selected="false">Workflow &amp; Tips</button>
+    <button class="tab-btn" data-tab="pipeline" role="tab" aria-selected="false">Pipeline</button>
+  </nav>
+
+  <div class="tab-pane active" data-tab="about" role="tabpanel">
     <!-- WHY I BUILT THIS -->
     <div class="why-box">
       <div class="s-label" style="margin-bottom:1rem">Why I Built This</div>
@@ -401,7 +434,9 @@ footer a{color:var(--gold);text-decoration:none}
       <p>iGrinder gives you a clean heightmap mesh with proper walls and a flat base — manifold, watertight, ready for the next step. <strong>Edit it in Blender</strong> (decimate, smooth, boolean cut, add text), then <strong>slice in Cura</strong> and print. That's the loop.</p>
       <p class="why-sig">— Jason Hamilton · Design Mainline</p>
     </div>
+  </div>
 
+  <div class="tab-pane" data-tab="examples" role="tabpanel" hidden>
     <!-- WHAT YOU CAN MAKE -->
     <div class="what-grid">
       <div class="what-card">
@@ -447,7 +482,9 @@ footer a{color:var(--gold);text-decoration:none}
         <p>Tessellating wall panels, decorative tiles, modern bas-relief art. Print, paint, mount.</p>
       </div>
     </div>
+  </div>
 
+  <div class="tab-pane" data-tab="workflow" role="tabpanel" hidden>
     <!-- WORKFLOW -->
     <div class="tips">
       <strong>The 5-Step Workflow</strong>
@@ -467,8 +504,23 @@ footer a{color:var(--gold);text-decoration:none}
       </ul>
       <span style="display:block;margin-top:.8rem;font-size:.7rem;letter-spacing:.04em">Resolution above 300 produces files over 10 MB and slows slicing. 200 is the recommended default.</span>
     </div>
-  </main>
-</div>
+  </div>
+
+  <div class="tab-pane" data-tab="pipeline" role="tabpanel" hidden>
+    <div class="hero-pipeline">
+      <span class="pipe-step"><span class="pipe-num">01</span><span class="pipe-label">Image</span></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step"><span class="pipe-num">02</span><span class="pipe-label">STL</span></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step"><span class="pipe-num">03</span><span class="pipe-label">Blender</span></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step"><span class="pipe-num">04</span><span class="pipe-label">Cura</span></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step"><span class="pipe-num">05</span><span class="pipe-label">Print</span></span>
+    </div>
+    <p class="pipeline-note">Drop a 2D image. Get a manifold STL. Open it in Blender to refine — boolean-cut, smooth, add text, decimate. Export to Cura, slice with the right preset (flat for relief/emboss, vertical with brim for lithophane), save the G-code, print.</p>
+  </div>
+</section>
 
 <footer>
   &copy; 2026 <a href="/">Design Mainline LLC</a> · iGrinder · Single-purchase license · Files yours to print, sell, or modify.
@@ -1022,6 +1074,22 @@ els.downloadObjBtn.addEventListener('click',()=>{
 });
 
 checkUnlockOnLoad();
+
+/* TAB SWITCHING */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target=btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      const on=b.dataset.tab===target;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    document.querySelectorAll('.tab-pane').forEach(p=>{
+      p.hidden=p.dataset.tab!==target;
+      p.classList.toggle('active',p.dataset.tab===target);
+    });
+  });
+});
 </script>
 </body>
 </html>
