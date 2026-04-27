@@ -3,19 +3,33 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>iGrinder — 2D Image to 3D STL · Design Mainline</title>
-<meta name="description" content="iGrinder turns any 2D image into a 3D-printable STL. Forging thoughts into reality — edit in Blender, slice in Cura, print on your 3D printer. $9 one-time download, no subscription, no watermark.">
+<title>iGrinder — 2D Image to 3D STL Generator · $9 One-Time, No Subscription</title>
+<meta name="description" content="Turn any photo or logo into a 3D-printable STL in your browser. Free live preview, $9 unlocks the file forever. No subscription, no watermark, commercial license included. By Design Mainline.">
+<meta name="theme-color" content="#060606">
+<link rel="canonical" href="https://designmainline.com/forge">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://designmainline.com/forge">
+<meta property="og:title" content="iGrinder — 2D Image to 3D STL · $9 One-Time">
+<meta property="og:description" content="Drop an image, get a 3D-printable STL. $9 one-time, no subscription, no watermark. Forging thoughts into reality.">
+<meta property="og:site_name" content="Design Mainline">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="iGrinder — 2D Image to 3D STL">
+<meta name="twitter:description" content="Forging thoughts into reality. $9, one file, yours forever.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script async src="https://js.stripe.com/v3/buy-button.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#8B7332;
+  --gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#A88B40;
   --black:#060606;--surface:#0C0C0C;--card:#111111;--card-hover:#161616;
   --border:rgba(198,165,75,0.1);--border-strong:rgba(198,165,75,0.25);
-  --white:#F2ECE0;--muted:#8A8070;--danger:#D9534F;--success:#7FB069;
+  --white:#F2ECE0;--muted:#9C9385;--danger:#D9534F;--success:#7FB069;
 }
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
+button:focus-visible,a:focus-visible{outline:1px solid var(--gold);outline-offset:2px}
+input:focus-visible,select:focus-visible{outline:none;border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
 html{scroll-behavior:smooth}
 body{font-family:'Outfit',sans-serif;font-weight:300;background:var(--black);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
 body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -36,14 +50,14 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 
 /* HERO STRIP */
 .tool-hero{padding:3rem 2rem 1.5rem;text-align:center;border-bottom:1px solid var(--border);position:relative}
-.tool-hero.compact{padding:1.1rem 2rem 1.1rem;text-align:left}
-.tool-hero.compact .hero-row{display:flex;align-items:center;gap:1.2rem;max-width:1200px;margin:0 auto;position:relative;z-index:2}
+.tool-hero.compact{padding:1.4rem 2rem;text-align:left}
+.tool-hero.compact .hero-row{display:flex;align-items:center;gap:1.3rem;max-width:1200px;margin:0 auto;position:relative;z-index:2}
 .tool-hero.compact .hero-text{flex:1;min-width:0}
-.tool-hero.compact .tool-title{font-size:clamp(1.15rem,2vw,1.55rem);margin-bottom:.25rem;line-height:1.2}
-.tool-hero.compact .tool-sub{font-size:.78rem;max-width:none;margin:0;line-height:1.5}
+.tool-hero.compact .ig-eyebrow{display:block;font-size:.58rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:.45rem;font-family:'Outfit',sans-serif;font-weight:500}
+.tool-hero.compact .tool-title{font-size:clamp(1.4rem,2.4vw,1.95rem);font-weight:400;margin-bottom:.4rem;line-height:1.18;letter-spacing:.01em}
+.tool-hero.compact .tool-sub{font-size:.82rem;max-width:none;margin:0;line-height:1.55;color:var(--muted)}
 .ig-mark-sm{flex-shrink:0}
-.ig-mark-sm svg{width:54px;height:54px;display:block;filter:drop-shadow(0 4px 14px rgba(255,138,61,.22))}
-.ig-tagline-inline{font-family:'Cinzel',serif;font-style:italic;color:var(--gold);font-size:.78rem;letter-spacing:.06em}
+.ig-mark-sm svg{width:62px;height:62px;display:block;filter:drop-shadow(0 4px 14px rgba(198,165,75,.22))}
 @media(max-width:600px){
   .tool-hero.compact{padding:.9rem 1rem}
   .tool-hero.compact .hero-row{gap:.8rem}
@@ -58,21 +72,30 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 
 /* LAYOUT */
 .layout{display:grid;grid-template-columns:340px 1fr;gap:0;min-height:calc(100vh - 220px)}
-@media(max-width:980px){.layout{grid-template-columns:1fr}}
+@media(max-width:980px){
+  .layout{grid-template-columns:1fr;display:flex;flex-direction:column}
+  .main{order:1}
+  .sidebar{order:2;border-right:none;border-top:1px solid var(--border)}
+}
 
-.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.75rem 1.5rem;overflow-y:auto}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:2rem 1.5rem 2.5rem;overflow-y:auto}
 .main{padding:1.75rem 2rem;display:flex;flex-direction:column;gap:1.25rem}
+.trust-pill{display:flex;align-items:center;gap:.55rem;padding:.6rem .75rem;border:1px solid rgba(127,176,105,.25);background:rgba(127,176,105,.05);margin-bottom:1rem}
+.trust-pill svg{flex-shrink:0;color:var(--success)}
+.trust-pill span{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--success);line-height:1.35}
 
 /* SECTION LABELS */
 .s-label{font-size:.62rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.85rem;display:flex;align-items:center;gap:.7rem}
 .s-label::before{content:'';width:18px;height:1px;background:var(--gold)}
-.group{margin-bottom:1.5rem}
+.group{margin-bottom:1.65rem;padding-bottom:1.65rem;border-bottom:1px solid var(--border)}
+.group:last-of-type,.group.no-rule{border-bottom:none;padding-bottom:.5rem}
 
 /* DROP ZONE */
 .drop{border:1px dashed var(--border-strong);padding:1.1rem;text-align:center;transition:all .3s;cursor:pointer;background:rgba(198,165,75,.02)}
 .drop:hover,.drop.dragover{border-color:var(--gold);background:rgba(198,165,75,.06)}
+.drop.has-file{border-style:solid;border-color:var(--gold);background:rgba(198,165,75,.04)}
 .drop p{margin:.3rem 0;font-size:.78rem;color:var(--muted)}
-.drop .hint{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dark)}
+.drop .hint{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 .drop input{display:none}
 .upload-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.85rem;background:transparent;color:var(--gold);border:1px solid var(--gold);font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:all .3s;margin-bottom:.6rem}
 .upload-btn:hover{background:var(--gold);color:var(--black)}
@@ -85,8 +108,9 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 .field input[type=number],.field input[type=text],.field select{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);padding:.6rem .7rem;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:300;outline:none;transition:border-color .3s}
 .field input[type=number]:focus,.field input[type=text]:focus,.field select:focus{border-color:var(--gold)}
 .field input[type=range]{width:100%;height:2px;-webkit-appearance:none;appearance:none;background:var(--border-strong);outline:none;margin:.5rem 0}
-.field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--gold);border:none;cursor:pointer;border-radius:50%}
-.field input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--gold);border:none;cursor:pointer;border-radius:50%}
+.field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;background:var(--gold);border:none;cursor:pointer;border-radius:0;transform:rotate(45deg);box-shadow:0 0 0 1px var(--black) inset, 0 0 0 1px var(--gold-light);transition:box-shadow .2s}
+.field input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 1px var(--black) inset, 0 0 0 1px var(--gold-light), 0 0 8px var(--gold)}
+.field input[type=range]::-moz-range-thumb{width:12px;height:12px;background:var(--gold);border:none;cursor:pointer;border-radius:0;transform:rotate(45deg)}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 .field select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23C6A54B' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2rem}
 
@@ -95,9 +119,10 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 
 /* PRESET CARDS */
 .preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.6rem}
-.preset-card{padding:.6rem .4rem;background:var(--card);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .3s;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.preset-card{padding:.75rem .4rem;background:var(--card);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .25s;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-family:'Outfit',sans-serif;font-weight:500;position:relative}
 .preset-card:hover{border-color:var(--border-strong);color:var(--white)}
-.preset-card.active{border-color:var(--gold);background:rgba(198,165,75,.06);color:var(--gold)}
+.preset-card.active{border-color:var(--gold);background:linear-gradient(180deg,rgba(198,165,75,.12),rgba(198,165,75,.04));color:var(--gold-light);box-shadow:inset 0 1px 0 rgba(232,212,139,.25)}
+.preset-card.active::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:24px;height:1px;background:var(--gold)}
 
 /* BUTTONS */
 .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:1rem;background:var(--gold);color:var(--black);border:none;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s;position:relative;overflow:hidden}
@@ -111,40 +136,56 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 .btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
 
 /* PAYWALL CTA */
-.paywall{background:linear-gradient(135deg,rgba(198,165,75,.06),rgba(198,165,75,.02));border:1px solid var(--border-strong);padding:1.1rem;margin-top:1rem}
-.paywall-title{font-family:'Cinzel',serif;font-size:.95rem;font-weight:500;margin-bottom:.4rem}
-.paywall-price{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1}
-.paywall-price small{font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-left:.5rem;display:inline-block}
+.paywall{background:linear-gradient(160deg,rgba(198,165,75,.10) 0%,rgba(198,165,75,.02) 60%,transparent 100%);border:1px solid var(--border-strong);padding:1.5rem 1.4rem;margin-top:1.5rem;position:relative}
+.paywall::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.paywall-title{font-family:'Outfit',sans-serif;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.3rem}
+.paywall-price{font-family:'Cinzel',serif;font-size:2.6rem;font-weight:500;color:var(--gold-light);line-height:1;margin:.4rem 0 .9rem;letter-spacing:-.01em}
+.paywall-price small{font-family:'Outfit',sans-serif;display:block;margin:.55rem 0 0;font-size:.58rem;font-weight:400;letter-spacing:.32em;text-transform:uppercase;color:var(--muted)}
 .paywall-desc{font-size:.72rem;color:var(--muted);margin:.6rem 0 1rem;line-height:1.6}
-.paywall-features{list-style:none;margin:.8rem 0 1rem;font-size:.7rem;color:var(--muted)}
-.paywall-features li{padding:.25rem 0;display:flex;align-items:center;gap:.55rem}
-.paywall-features li::before{content:'◆';color:var(--gold);font-size:.45rem}
-.paywall.unlocked{background:linear-gradient(135deg,rgba(127,176,105,.08),rgba(127,176,105,.02));border-color:rgba(127,176,105,.3)}
+.paywall-features{list-style:none;margin:.8rem 0 1rem;font-size:.72rem;color:var(--white)}
+.paywall-features li{padding:.3rem 0;display:flex;align-items:flex-start;gap:.55rem;line-height:1.5}
+.paywall-features li svg{flex-shrink:0;margin-top:.2rem;color:var(--gold)}
+.paywall-secure{display:flex;align-items:center;justify-content:center;gap:.45rem;margin:.4rem 0 .55rem;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.paywall-secure svg{color:var(--gold-dark)}
+.paywall-guarantee{margin:.2rem 0 .8rem;font-size:.65rem;color:var(--gold-dark);letter-spacing:.02em;line-height:1.5;text-align:center}
+.paywall-guarantee strong{color:var(--gold)}
+.paywall.unlocked{background:linear-gradient(160deg,rgba(127,176,105,.10),rgba(127,176,105,.02));border-color:rgba(127,176,105,.3)}
+.paywall.unlocked::before{background:linear-gradient(90deg,transparent,var(--success),transparent)}
 .paywall.unlocked .paywall-title{color:var(--success)}
-.paywall.unlocked .paywall-price{color:var(--success)}
+#haveAccessBtn{margin-top:1rem;font-size:.6rem;letter-spacing:.18em;color:var(--muted);border:none;background:transparent;text-decoration:underline;text-decoration-color:var(--border-strong);text-underline-offset:4px;text-transform:uppercase;cursor:pointer;font-family:'Outfit',sans-serif;padding:.4rem;width:100%}
+#haveAccessBtn:hover{color:var(--gold);text-decoration-color:var(--gold)}
 
 /* PREVIEW */
 .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:780px){.preview-grid{grid-template-columns:1fr}}
 .preview-box{background:var(--card);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;position:relative}
-.preview-box .pv-corner{position:absolute;width:16px;height:16px;border:1px solid var(--gold);opacity:.4;pointer-events:none;z-index:3}
-.preview-box .pv-corner.tl{top:6px;left:6px;border-right:none;border-bottom:none}
-.preview-box .pv-corner.tr{top:6px;right:6px;border-left:none;border-bottom:none}
-.preview-box .pv-corner.bl{bottom:6px;left:6px;border-right:none;border-top:none}
-.preview-box .pv-corner.br{bottom:6px;right:6px;border-left:none;border-top:none}
+.preview-box .pv-corner{position:absolute;width:14px;height:14px;border:1px solid var(--gold);opacity:.55;pointer-events:none;z-index:3;transition:opacity .3s,width .3s,height .3s}
+.preview-box .pv-corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.preview-box .pv-corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
+.preview-box .pv-corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
+.preview-box .pv-corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.preview-box:hover .pv-corner{opacity:.9;width:18px;height:18px}
 .preview-box .title{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding:.7rem .9rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
 .preview-box .title .pv-info{color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.1em}
 .preview-box .body{flex:1;display:flex;align-items:center;justify-content:center;padding:.8rem;min-height:340px;position:relative;background:#000}
 #heightmapCanvas{max-width:100%;max-height:100%;image-rendering:pixelated}
 #threeContainer{width:100%;height:100%;min-height:340px;cursor:grab}
 #threeContainer:active{cursor:grabbing}
-.empty{color:var(--muted);font-size:.78rem;text-align:center;letter-spacing:.05em;font-family:'Cinzel',serif;font-weight:400}
+.empty{display:flex;flex-direction:column;align-items:center;gap:.65rem;color:var(--muted);text-align:center;padding:1rem 1.5rem}
+.empty-icon{width:38px;height:38px;opacity:.4;color:var(--gold)}
+.empty-title{font-family:'Cinzel',serif;font-size:.92rem;letter-spacing:.04em;color:var(--white);font-weight:500}
+.empty-hint{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-family:'Outfit',sans-serif}
+.empty-cta{margin-top:.6rem;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Outfit',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:.55rem 1rem;cursor:pointer;transition:all .3s}
+.empty-cta:hover{background:var(--gold);color:var(--black)}
 
-/* STATS HUD */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;background:var(--surface);border:1px solid var(--border);padding:.9rem}
-.stat .label{color:var(--muted);text-transform:uppercase;font-size:.58rem;letter-spacing:.2em;margin-bottom:.25rem}
-.stat .value{color:var(--white);font-weight:500;font-variant-numeric:tabular-nums;font-size:.85rem}
+/* STATS — instrument cluster */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--surface);border:1px solid var(--border)}
+.stat{padding:1rem 1.2rem;border-right:1px solid var(--border);position:relative}
+.stat:last-child{border-right:none}
+.stat .label{color:var(--muted);font-size:.55rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:.45rem}
+.stat .value{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;color:var(--white);font-variant-numeric:tabular-nums;letter-spacing:.01em;line-height:1.2}
 .stat .value.gold{color:var(--gold)}
+@media(max-width:780px){.stat{border-right:none;border-bottom:1px solid var(--border)}.stat:last-child{border-bottom:none}}
 
 /* TIPS */
 .tips{background:var(--surface);border:1px solid var(--border);padding:1.1rem 1.3rem;font-size:.78rem;color:var(--muted);line-height:1.7}
@@ -165,8 +206,12 @@ nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex
 .bg-hex{font-size:.7rem;color:var(--muted);font-family:'Outfit',monospace;letter-spacing:.04em}
 
 /* FOOTER */
-footer{padding:2rem;border-top:1px solid var(--border);text-align:center;font-size:.7rem;color:var(--muted);letter-spacing:.05em}
-footer a{color:var(--gold);text-decoration:none}
+footer{padding:3rem 2rem 2.5rem;border-top:1px solid var(--border-strong);text-align:center;font-size:.7rem;color:var(--muted);letter-spacing:.05em}
+footer a{color:var(--gold);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--gold-light)}
+.footer-links{margin-top:.7rem;font-size:.65rem;display:flex;justify-content:center;flex-wrap:wrap;gap:.7rem;align-items:center}
+.footer-links .sep{color:var(--border-strong)}
+.footer-meta{color:var(--muted);font-size:.65rem;letter-spacing:.04em}
 
 /* PRINT TRIANGLE WATERMARK in 3D viewport */
 .viewport-mark{position:absolute;bottom:.7rem;right:.9rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--gold);opacity:.5;text-transform:uppercase;pointer-events:none;z-index:2}
@@ -181,8 +226,8 @@ footer a{color:var(--gold);text-decoration:none}
 .pipe-step{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .9rem;border:1px solid var(--border-strong);background:rgba(198,165,75,.03)}
 .pipe-num{font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold);font-weight:600;letter-spacing:.04em}
 .pipe-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white)}
-.pipe-arrow{color:var(--gold-dark);font-size:.85rem;letter-spacing:0}
-@media(max-width:680px){.hero-pipeline{gap:.4rem}.pipe-step{padding:.3rem .55rem}.pipe-arrow{font-size:.7rem}}
+.pipe-arrow{color:var(--gold);opacity:.6;flex-shrink:0}
+@media(max-width:680px){.hero-pipeline{gap:.4rem}.pipe-step{padding:.3rem .55rem}.pipe-arrow{width:18px;height:9px}}
 
 /* STRIPE BUY BUTTON WRAP */
 .stripe-button-wrap{display:flex;justify-content:center;margin:.4rem 0 .2rem;min-height:42px}
@@ -194,7 +239,7 @@ footer a{color:var(--gold);text-decoration:none}
 .why-box .why-lead{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:500;color:var(--white);margin-bottom:1rem;line-height:1.4;letter-spacing:.01em}
 .why-box p{color:var(--muted);font-size:.86rem;line-height:1.85;margin-bottom:.85rem}
 .why-box p strong{color:var(--white);font-weight:500}
-.why-box .why-sig{margin-top:1.1rem;margin-bottom:0;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.why-box .why-sig{font-family:'Cinzel',serif;font-style:italic;font-weight:400;font-size:.95rem;letter-spacing:.02em;color:var(--gold-light);text-transform:none;margin-top:1.5rem;margin-bottom:0}
 
 /* WHAT YOU CAN MAKE */
 .what-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
@@ -224,9 +269,11 @@ footer a{color:var(--gold);text-decoration:none}
 .info-section{border-top:1px solid var(--border);background:var(--surface);padding:0 2rem 2rem}
 .tab-nav{display:flex;gap:0;border-bottom:1px solid var(--border);margin:0 -2rem 1.6rem;padding:0 2rem;overflow-x:auto;scrollbar-width:none}
 .tab-nav::-webkit-scrollbar{display:none}
-.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;padding:1rem 1.2rem;cursor:pointer;transition:all .25s;white-space:nowrap;margin-bottom:-1px}
+.tab-nav{border-bottom:1px solid var(--border-strong);position:relative}
+.tab-btn{background:transparent;border:none;border-bottom:1px solid transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.66rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;padding:1.1rem 1.4rem;cursor:pointer;transition:all .25s;white-space:nowrap;margin-bottom:-1px;position:relative}
 .tab-btn:hover{color:var(--white)}
 .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-btn.active::after{content:'';position:absolute;left:50%;bottom:-1px;width:6px;height:6px;background:var(--gold);border-radius:50%;transform:translate(-50%,50%);box-shadow:0 0 8px var(--gold)}
 .tab-pane{max-width:1200px;margin:0 auto;animation:tabFade .3s ease}
 .tab-pane[hidden]{display:none}
 @keyframes tabFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -253,46 +300,52 @@ footer a{color:var(--gold);text-decoration:none}
   <div class="hero-glow"></div>
   <div class="hero-row">
     <div class="ig-mark-sm" aria-label="iGrinder">
-      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
-          <linearGradient id="igOrange" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FF8A3D"/>
-            <stop offset="100%" stop-color="#E25A0F"/>
+          <linearGradient id="igGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#E8D48B"/>
+            <stop offset="100%" stop-color="#A88B40"/>
           </linearGradient>
         </defs>
         <circle cx="60" cy="60" r="56" fill="#0F0F12" stroke="#1F1F22" stroke-width="2"/>
-        <path d="M78 36 A22 22 0 1 0 78 84 L78 64 L60 64 L60 72 L70 72 A14 14 0 1 1 70 48 L86 48 Z" fill="url(#igOrange)" stroke="#C24D08" stroke-width="0.5"/>
+        <path d="M78 36 A22 22 0 1 0 78 84 L78 64 L60 64 L60 72 L70 72 A14 14 0 1 1 70 48 L86 48 Z" fill="url(#igGold)" stroke="#8B7332" stroke-width="0.5"/>
         <circle cx="42" cy="38" r="4.5" fill="#F2ECE0"/>
         <rect x="37.5" y="48" width="9" height="36" fill="#F2ECE0"/>
       </svg>
     </div>
     <div class="hero-text">
-      <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span></h1>
-      <p class="tool-sub"><span class="ig-tagline-inline">Forging thoughts into reality</span> · Drop an image, get a clean STL — refine in Blender, slice in Cura, print at home. Live preview free, $9 unlocks the file.</p>
+      <span class="ig-eyebrow">Forging thoughts into reality</span>
+      <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span> — for $9</h1>
+      <p class="tool-sub">Drag in a photo, see it in 3D instantly. Pay once, download forever — no subscription, no watermark, no account.</p>
     </div>
   </div>
 </section>
 
 <div class="layout">
   <aside class="sidebar">
+    <div class="trust-pill" role="note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span>Runs in your browser · Image never uploaded</span>
+    </div>
+
     <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg" style="display:none" />
 
-    <button class="upload-btn" id="uploadBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      Choose Image
+    <button class="upload-btn" id="uploadBtn" type="button">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload Source Image
     </button>
-    <div class="drop" id="dropZone">
-      <p>or drag &amp; drop</p>
-      <p class="hint">PNG · JPG · 10MB max</p>
+    <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Drop image here or click to choose a file">
+      <p class="drop-desktop">or drag &amp; drop here</p>
+      <p class="hint">PNG / JPG · up to 10MB · high contrast prints best</p>
     </div>
     <div class="file-name" id="fileName"></div>
 
     <div class="group" style="margin-top:1.4rem">
       <div class="s-label">Preset</div>
-      <div class="preset-row" id="presetRow">
-        <div class="preset-card active" data-preset="relief">Relief</div>
-        <div class="preset-card" data-preset="litho">Lithophane</div>
-        <div class="preset-card" data-preset="emboss">Emboss</div>
+      <div class="preset-row" id="presetRow" role="radiogroup" aria-label="Preset">
+        <button type="button" class="preset-card active" data-preset="relief" role="radio" aria-checked="true">Relief</button>
+        <button type="button" class="preset-card" data-preset="litho" role="radio" aria-checked="false">Lithophane</button>
+        <button type="button" class="preset-card" data-preset="emboss" role="radio" aria-checked="false">Emboss</button>
       </div>
     </div>
 
@@ -300,35 +353,35 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="s-label">Dimensions · mm</div>
       <div class="field-row">
         <div class="field">
-          <label>Width <span class="val" id="widthVal">100</span></label>
-          <input type="number" id="widthIn" value="100" min="10" max="500" step="1" />
+          <label for="widthIn">Width <span class="val" id="widthVal">100</span></label>
+          <input id="widthIn" type="number" value="100" min="10" max="500" step="1" />
         </div>
         <div class="field">
-          <label>Base <span class="val" id="baseVal">1.0</span></label>
-          <input type="number" id="baseIn" value="1.0" min="0.4" max="10" step="0.1" />
+          <label for="baseIn">Base <span class="val" id="baseVal">1.0</span></label>
+          <input id="baseIn" type="number" value="1.0" min="0.4" max="10" step="0.1" />
         </div>
       </div>
       <div class="field">
-        <label>Relief Height <span class="val"><span id="heightVal">3.0</span> mm</span></label>
-        <input type="range" id="heightIn" value="3.0" min="0.4" max="20" step="0.1" />
+        <label for="heightIn">Relief Height <span class="val"><span id="heightVal">3.0</span> mm</span></label>
+        <input id="heightIn" type="range" value="3.0" min="0.4" max="20" step="0.1" />
       </div>
     </div>
 
     <div class="group">
       <div class="s-label">Detail</div>
       <div class="field">
-        <label>Resolution <span class="val"><span id="resVal">200</span> px</span></label>
-        <input type="range" id="resIn" value="200" min="50" max="400" step="10" />
+        <label for="resIn">Resolution <span class="val"><span id="resVal">200</span> px</span></label>
+        <input id="resIn" type="range" value="200" min="50" max="400" step="10" />
       </div>
       <div class="field">
-        <label>Smoothing <span class="val" id="smoothVal">0</span></label>
-        <input type="range" id="smoothIn" value="0" min="0" max="3" step="1" />
+        <label for="smoothIn">Smoothing <span class="val" id="smoothVal">0</span></label>
+        <input id="smoothIn" type="range" value="0" min="0" max="3" step="1" />
       </div>
     </div>
 
     <div class="group">
       <div class="s-label">Background Removal</div>
-      <label class="checkbox"><input type="checkbox" id="bgEnable" /><span>Remove background</span></label>
+      <label class="checkbox" for="bgEnable"><input id="bgEnable" type="checkbox" /><span>Remove background</span></label>
       <div id="bgControls" style="display:none">
         <div class="bg-row">
           <div class="bg-swatch" id="bgSwatch"></div>
@@ -339,47 +392,53 @@ footer a{color:var(--gold);text-decoration:none}
           <button class="btn-secondary" id="bgPick" type="button">Pick Color</button>
         </div>
         <div class="field">
-          <label>Tolerance <span class="val" id="bgTolVal">40</span></label>
-          <input type="range" id="bgTol" value="40" min="0" max="180" step="1" />
+          <label for="bgTol">Tolerance <span class="val" id="bgTolVal">40</span></label>
+          <input id="bgTol" type="range" value="40" min="0" max="180" step="1" />
         </div>
-        <label class="checkbox"><input type="checkbox" id="bgSoft" checked /><span>Soft edges</span></label>
+        <label class="checkbox" for="bgSoft"><input id="bgSoft" type="checkbox" checked /><span>Soft edges</span></label>
       </div>
     </div>
 
     <div class="group">
       <div class="s-label">Modifiers</div>
-      <label class="checkbox"><input type="checkbox" id="invert" /><span>Invert (dark = tall)</span></label>
-      <label class="checkbox"><input type="checkbox" id="negative" /><span>Negative / deboss</span></label>
-      <label class="checkbox"><input type="checkbox" id="mirror" /><span>Mirror horizontally</span></label>
-      <label class="checkbox"><input type="checkbox" id="silhouette" /><span>Cut to subject</span></label>
+      <label class="checkbox" for="invert"><input id="invert" type="checkbox" /><span>Invert (dark = tall)</span></label>
+      <label class="checkbox" for="negative"><input id="negative" type="checkbox" /><span>Negative / deboss</span></label>
+      <label class="checkbox" for="mirror"><input id="mirror" type="checkbox" /><span>Mirror horizontally</span></label>
+      <label class="checkbox" for="silhouette"><input id="silhouette" type="checkbox" /><span>Cut to subject</span></label>
     </div>
 
     <!-- PAYWALL -->
     <div class="paywall" id="paywall">
-      <div class="paywall-title">Unlock Download</div>
-      <div class="paywall-price">$9<small>One-Time</small></div>
+      <div class="paywall-title">Get Your STL</div>
+      <div class="paywall-price">$9<small>One-Time · No Subscription</small></div>
       <ul class="paywall-features">
-        <li>Binary STL — print-ready</li>
-        <li>OBJ — for Blender / Meshmixer</li>
-        <li>Yours to print, sell, or modify</li>
-        <li>No watermark · No subscription</li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg><span>Print-ready STL — drops straight into Cura, PrusaSlicer, Bambu</span></li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg><span>OBJ included — refine in Blender before you slice</span></li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg><span>Manifold &amp; watertight — no repair needed</span></li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg><span>Commercial license — sell what you print on Etsy, no royalty</span></li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="5 12 10 17 19 7"/></svg><span>Re-download anytime from this device</span></li>
       </ul>
-      <p class="paywall-desc" style="margin:.4rem 0 .8rem">After payment, return to this tab — your download unlocks automatically.</p>
+      <p class="paywall-secure">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Secure checkout · Stripe
+      </p>
       <div class="stripe-button-wrap">
         <stripe-buy-button
           buy-button-id="buy_btn_1TQnYKD7tGQxpyHP9PcVeEmE"
           publishable-key="pk_live_51RiyeZD7tGQxpyHPToc5vjdnnhaHXAJgJ3rwtXB4pV3pv71xPx5CWq4lCRTpI56jJkWwjFdMuWWVs93gVK2FOBzA006WxolJtU"
         ></stripe-buy-button>
+        <noscript><a href="mailto:jason@designmainline.com?subject=iGrinder%20%249%20purchase" class="btn-primary">Email to purchase</a></noscript>
       </div>
-      <button class="btn-ghost" id="haveAccessBtn" style="margin-top:.6rem;font-size:.62rem">I already paid — unlock</button>
+      <p class="paywall-guarantee"><strong>◆ 7-day money-back guarantee.</strong> If the STL doesn't print, email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a> for a full refund.</p>
+      <button class="btn-ghost" id="haveAccessBtn" type="button">Paid but not unlocked? Click here</button>
     </div>
 
     <!-- POST-PAYMENT (hidden until unlocked) -->
     <div class="paywall unlocked" id="paywallUnlocked" style="display:none;margin-top:.6rem">
-      <div class="paywall-title">✓ Unlocked</div>
-      <p class="paywall-desc">Thank you. Open in Blender to refine, then export and slice in Cura.</p>
-      <button class="btn-primary" id="generateBtn" style="margin-bottom:.5rem">Download STL</button>
-      <button class="btn-ghost" id="downloadObjBtn">Download OBJ</button>
+      <div class="paywall-title">✓ Unlocked · Forge Ready</div>
+      <p class="paywall-desc">Thank you. Generate your STL below — then slice in Cura, or refine first in Blender.</p>
+      <button class="btn-primary" id="generateBtn" type="button" style="margin-bottom:.5rem">Forge &amp; Download STL</button>
+      <button class="btn-ghost" id="downloadObjBtn" type="button">Also Download OBJ</button>
     </div>
   </aside>
 
@@ -391,7 +450,12 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="title"><span>Heightmap</span><span class="pv-info" id="hmInfo"></span></div>
         <div class="body">
           <canvas id="heightmapCanvas"></canvas>
-          <div class="empty" id="hmEmpty">Drop an image to begin</div>
+          <div class="empty" id="hmEmpty">
+            <svg class="empty-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 36l10-14 8 8 8-12 14 18z"/><circle cx="36" cy="14" r="3"/></svg>
+            <span class="empty-title">Drop an image to begin</span>
+            <span class="empty-hint">High contrast works best</span>
+            <button type="button" class="empty-cta" id="trySampleBtn">Try with a sample image →</button>
+          </div>
         </div>
       </div>
       <div class="preview-box">
@@ -399,14 +463,18 @@ footer a{color:var(--gold);text-decoration:none}
         <span class="pv-corner bl"></span><span class="pv-corner br"></span>
         <div class="title"><span>3D Preview</span><span class="pv-info">drag · scroll</span></div>
         <div class="body">
-          <div id="threeContainer"></div>
-          <div class="empty" id="threeEmpty" style="position:absolute">Awaiting source</div>
+          <div id="threeContainer" role="img" aria-label="Live 3D preview of generated mesh; drag to orbit, scroll to zoom"></div>
+          <div class="empty" id="threeEmpty" style="position:absolute">
+            <svg class="empty-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M24 6l16 9v18l-16 9-16-9V15z"/><path d="M8 15l16 9 16-9M24 24v18"/></svg>
+            <span class="empty-title">Awaiting source</span>
+            <span class="empty-hint">3D mesh will render here</span>
+          </div>
           <div class="viewport-mark">iGrinder</div>
         </div>
       </div>
     </div>
 
-    <div class="stats" id="stats" style="display:none">
+    <div class="stats" id="stats" style="display:none" aria-live="polite">
       <div class="stat"><div class="label">Source</div><div class="value" id="statSource">—</div></div>
       <div class="stat"><div class="label">Grid</div><div class="value" id="statGrid">—</div></div>
       <div class="stat"><div class="label">Triangles</div><div class="value gold" id="statTris">—</div></div>
@@ -418,84 +486,84 @@ footer a{color:var(--gold);text-decoration:none}
 
 <!-- TABBED INFO SECTION -->
 <section class="info-section">
-  <nav class="tab-nav" role="tablist">
-    <button class="tab-btn active" data-tab="about" role="tab" aria-selected="true">About iGrinder</button>
-    <button class="tab-btn" data-tab="examples" role="tab" aria-selected="false">What You Can Make</button>
-    <button class="tab-btn" data-tab="workflow" role="tab" aria-selected="false">Workflow &amp; Tips</button>
-    <button class="tab-btn" data-tab="pipeline" role="tab" aria-selected="false">Pipeline</button>
+  <nav class="tab-nav" role="tablist" aria-label="More information about iGrinder">
+    <button class="tab-btn active" id="tab-examples" data-tab="examples" role="tab" aria-selected="true" aria-controls="panel-examples" tabindex="0">What You Can Make</button>
+    <button class="tab-btn" id="tab-workflow" data-tab="workflow" role="tab" aria-selected="false" aria-controls="panel-workflow" tabindex="-1">Workflow &amp; Tips</button>
+    <button class="tab-btn" id="tab-about" data-tab="about" role="tab" aria-selected="false" aria-controls="panel-about" tabindex="-1">About iGrinder</button>
+    <button class="tab-btn" id="tab-pipeline" data-tab="pipeline" role="tab" aria-selected="false" aria-controls="panel-pipeline" tabindex="-1">Pipeline</button>
   </nav>
 
-  <div class="tab-pane active" data-tab="about" role="tabpanel">
+  <div class="tab-pane" id="panel-about" data-tab="about" role="tabpanel" aria-labelledby="tab-about" tabindex="0" hidden>
     <!-- WHY I BUILT THIS -->
     <div class="why-box">
-      <div class="s-label" style="margin-bottom:1rem">Why I Built This</div>
-      <p class="why-lead">I 3D-print a lot. The bottleneck was always the same — turning a flat image into a usable mesh.</p>
-      <p>Existing tools were either expensive subscription SaaS, broken open-source experiments, or marketplaces that wanted a cut of every download. I wanted something <strong>fast, no-account, no-subscription</strong> — drop an image, see it in 3D, pay once, get the file. So I built it.</p>
-      <p>iGrinder gives you a clean heightmap mesh with proper walls and a flat base — manifold, watertight, ready for the next step. <strong>Edit it in Blender</strong> (decimate, smooth, boolean cut, add text), then <strong>slice in Cura</strong> and print. That's the loop.</p>
+      <h2 class="s-label" style="margin-bottom:1rem">Why I Built This</h2>
+      <p class="why-lead">I lost an afternoon trying to turn my kid's drawing into a 3D-printable file. Every tool was either $30/month, broken, or wanted a cut of every download. So I built iGrinder.</p>
+      <p>Drop an image. See it in 3D. Pay $9 once. Get the file. <strong>No account, no subscription, no royalty.</strong> The mesh is clean — manifold, watertight, with proper walls and a flat base. Slice it tonight. Print it tomorrow.</p>
+      <p>If you want to push further, <strong>open it in Blender</strong> (decimate, smooth, boolean-cut, add base text), then <strong>slice in Cura, PrusaSlicer, or Bambu Studio</strong>. That's the whole loop.</p>
       <p class="why-sig">— Jason Hamilton · Design Mainline</p>
     </div>
   </div>
 
-  <div class="tab-pane" data-tab="examples" role="tabpanel" hidden>
+  <div class="tab-pane active" id="panel-examples" data-tab="examples" role="tabpanel" aria-labelledby="tab-examples" tabindex="0">
     <!-- WHAT YOU CAN MAKE -->
     <div class="what-grid">
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
         </div>
-        <h4>Lithophanes</h4>
+        <h3>Lithophanes</h3>
         <p>Photos that come alive when backlit. Use the Lithophane preset, print vertical in white PLA, drop an LED behind it.</p>
       </div>
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="18" height="10" rx="1"/><path d="M7 11h10M7 14h6"/></svg>
         </div>
-        <h4>Logo Reliefs &amp; Signage</h4>
+        <h3>Logo Reliefs &amp; Signage</h3>
         <p>Embossed nameplates, business signs, branded coasters. Use Emboss preset for a 1–2mm raised mark on a thick base.</p>
       </div>
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
         </div>
-        <h4>Architectural Models</h4>
+        <h3>Architectural Models</h3>
         <p>Topo maps, floor plans, building elevations. Drop a heightmap PNG and get a real, dimensional model.</p>
       </div>
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/></svg>
         </div>
-        <h4>Portraits &amp; Pet Reliefs</h4>
+        <h3>Portraits &amp; Pet Reliefs</h3>
         <p>Turn a photo of a person, pet, or anything you love into a tactile relief. Use Cut to Subject for a clean silhouette.</p>
       </div>
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         </div>
-        <h4>Game Tokens &amp; Miniatures</h4>
+        <h3>Game Tokens &amp; Miniatures</h3>
         <p>Custom D&amp;D bases, board game pieces, faction crests. Negative-deboss for inset details.</p>
       </div>
       <div class="what-card">
         <div class="what-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 4v16M4 8h16"/></svg>
         </div>
-        <h4>Tiles &amp; Wall Art</h4>
+        <h3>Tiles &amp; Wall Art</h3>
         <p>Tessellating wall panels, decorative tiles, modern bas-relief art. Print, paint, mount.</p>
       </div>
     </div>
   </div>
 
-  <div class="tab-pane" data-tab="workflow" role="tabpanel" hidden>
+  <div class="tab-pane" id="panel-workflow" data-tab="workflow" role="tabpanel" aria-labelledby="tab-workflow" tabindex="0" hidden>
     <!-- WORKFLOW -->
     <div class="tips">
-      <strong>The 5-Step Workflow</strong>
+      <h2 class="s-label" style="margin-bottom:.7rem">The Workflow</h2>
       <ol class="workflow-list">
-        <li><strong>Upload</strong> — PNG or JPG. Higher contrast = better depth. Flat lighting helps.</li>
-        <li><strong>Tune</strong> — pick a preset, then dial width, base, and relief height in mm. Live 3D preview updates instantly.</li>
-        <li><strong>Pay &amp; Download STL</strong> — $9 unlocks both STL and OBJ. Yours to keep.</li>
-        <li><strong>Edit in Blender</strong> (optional) — Import STL → Edit Mode → smooth, decimate, boolean-cut, add base text, then export a new STL.</li>
-        <li><strong>Slice in Cura</strong> — File → Open → STL → orient flat (relief/emboss) or vertical (lithophane) → slice → save G-code → print.</li>
+        <li><strong>Upload</strong> — PNG or JPG, any size. Higher contrast = better depth.</li>
+        <li><strong>Tune in real-time</strong> — pick a preset, adjust width and depth in mm. The 3D preview updates instantly.</li>
+        <li><strong>Pay $9, download</strong> — STL and OBJ both unlock. Files are yours forever.</li>
+        <li><strong>Slice &amp; print</strong> — open the STL in Cura/PrusaSlicer/Bambu, slice, send to printer. Done in 5 minutes.</li>
+        <li><strong>(Optional) Refine in Blender</strong> — power users only. Smooth, decimate, boolean-cut, add base text, then re-export.</li>
       </ol>
-      <strong style="display:block;margin-top:1rem">Preset Cheat Sheet</strong>
+      <h3 class="s-label" style="display:block;margin-top:1.5rem;margin-bottom:.7rem">Preset Cheat Sheet</h3>
       <ul>
         <li><strong>Relief:</strong> portraits &amp; logos with depth — print flat, 0.12–0.16 mm layers, any color PLA.</li>
         <li><strong>Lithophane:</strong> photos lit from behind — print vertical with brim, white PLA, 0.1 mm layers, 100% infill, ~3 mm thick.</li>
@@ -506,16 +574,16 @@ footer a{color:var(--gold);text-decoration:none}
     </div>
   </div>
 
-  <div class="tab-pane" data-tab="pipeline" role="tabpanel" hidden>
+  <div class="tab-pane" id="panel-pipeline" data-tab="pipeline" role="tabpanel" aria-labelledby="tab-pipeline" tabindex="0" hidden>
     <div class="hero-pipeline">
       <span class="pipe-step"><span class="pipe-num">01</span><span class="pipe-label">Image</span></span>
-      <span class="pipe-arrow">→</span>
+      <svg class="pipe-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true"><path d="M0 6h22M16 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
       <span class="pipe-step"><span class="pipe-num">02</span><span class="pipe-label">STL</span></span>
-      <span class="pipe-arrow">→</span>
+      <svg class="pipe-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true"><path d="M0 6h22M16 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
       <span class="pipe-step"><span class="pipe-num">03</span><span class="pipe-label">Blender</span></span>
-      <span class="pipe-arrow">→</span>
+      <svg class="pipe-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true"><path d="M0 6h22M16 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
       <span class="pipe-step"><span class="pipe-num">04</span><span class="pipe-label">Cura</span></span>
-      <span class="pipe-arrow">→</span>
+      <svg class="pipe-arrow" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true"><path d="M0 6h22M16 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
       <span class="pipe-step"><span class="pipe-num">05</span><span class="pipe-label">Print</span></span>
     </div>
     <p class="pipeline-note">Drop a 2D image. Get a manifold STL. Open it in Blender to refine — boolean-cut, smooth, add text, decimate. Export to Cura, slice with the right preset (flat for relief/emboss, vertical with brim for lithophane), save the G-code, print.</p>
@@ -523,10 +591,20 @@ footer a{color:var(--gold);text-decoration:none}
 </section>
 
 <footer>
-  &copy; 2026 <a href="/">Design Mainline LLC</a> · iGrinder · Single-purchase license · Files yours to print, sell, or modify.
+  <div class="footer-meta">&copy; 2026 <a href="/">Design Mainline LLC</a> · iGrinder · Single-purchase license · Files yours to print, sell, or modify.</div>
+  <div class="footer-links">
+    <a href="mailto:jason@designmainline.com">Email Support</a>
+    <span class="sep">·</span>
+    <a href="mailto:jason@designmainline.com?subject=iGrinder%20refund">7-day Refund</a>
+    <span class="sep">·</span>
+    <a href="/">Back to Studio</a>
+    <span class="sep">·</span>
+    <span class="footer-meta">Processed entirely in your browser</span>
+  </div>
 </footer>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<noscript><p style="padding:2rem;color:#C6A54B;text-align:center">iGrinder runs entirely in your browser and needs JavaScript enabled. Please enable JS, or email <a href="mailto:jason@designmainline.com" style="color:#E8D48B">jason@designmainline.com</a>.</p></noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -614,9 +692,14 @@ function syncLabels() {
   els.resVal.textContent = els.resIn.value;
   els.smoothVal.textContent = els.smoothIn.value;
 }
+let regenTimer;
+function scheduleRegenerate(){
+  clearTimeout(regenTimer);
+  regenTimer=setTimeout(()=>{ if(state.image) regenerate(); },80);
+}
 ['input','change'].forEach(ev=>{
-  [els.widthIn,els.baseIn,els.heightIn,els.resIn,els.smoothIn].forEach(el=>el.addEventListener(ev,()=>{syncLabels();if(state.image)regenerate();}));
-  [els.invert,els.negative,els.mirror,els.silhouette].forEach(el=>el.addEventListener(ev,()=>{if(state.image)regenerate();}));
+  [els.widthIn,els.baseIn,els.heightIn,els.resIn,els.smoothIn].forEach(el=>el.addEventListener(ev,()=>{syncLabels();scheduleRegenerate();}));
+  [els.invert,els.negative,els.mirror,els.silhouette].forEach(el=>el.addEventListener(ev,scheduleRegenerate));
 });
 syncLabels();
 
@@ -646,26 +729,33 @@ els.fileInput.addEventListener('change',e=>{const f=e.target.files[0];if(f)loadF
 els.dropZone.addEventListener('drop',e=>{
   const f=e.dataTransfer.files[0];
   if(f && (f.type==='image/png'||f.type==='image/jpeg')) loadFile(f);
-  else toast('PNG or JPG only','error');
+  else toast('Need a PNG or JPG — that file isn\'t supported','error');
 });
 
+const MAX_BYTES=10*1024*1024;
+const MAX_PIXELS=8000*8000;
 function loadFile(file){
+  if(!/^image\/(png|jpe?g)$/.test(file.type)){toast('Need a PNG or JPG — that file isn\'t supported','error');return;}
+  if(file.size>MAX_BYTES){toast('File exceeds 10 MB — please resize','error');return;}
   const reader=new FileReader();
   reader.onload=e=>{
     const img=new Image();
     img.onload=()=>{
+      if(img.width<2||img.height<2){toast('Image too small','error');return;}
+      if(img.width*img.height>MAX_PIXELS){toast('Image too large (over 64 megapixels)','error');return;}
       state.image=img;
       state.imageName=file.name.replace(/\.[^.]+$/,'');
       els.hmEmpty.style.display='none'; els.threeEmpty.style.display='none';
       els.generateBtn.disabled=false; els.downloadObjBtn.disabled=false;
       els.fileName.textContent='✓ '+file.name; els.fileName.style.display='block';
+      els.dropZone.classList.add('has-file');
       regenerate();
-      toast('Image loaded','success');
+      toast('Image forged · adjusting heightmap','success');
     };
-    img.onerror=()=>toast('Failed to decode image','error');
+    img.onerror=()=>toast('That image won\'t open. Try a different file.','error');
     img.src=e.target.result;
   };
-  reader.onerror=()=>toast('Failed to read file','error');
+  reader.onerror=()=>toast('File read failed. Try again.','error');
   reader.readAsDataURL(file);
 }
 
@@ -681,7 +771,7 @@ function applyBgRemoval(img){
     const dr=px[i]-br, dg=px[i+1]-bgg, db=px[i+2]-bb;
     const d2=dr*dr+dg*dg+db*db;
     if(d2<=tol2) px[i+3]=0;
-    else if(soft){ const d=Math.sqrt(d2); if(d<tol+softRange) px[i+3]=Math.round(255*(d-tol)/softRange); }
+    else if(soft){ const d=Math.sqrt(d2); if(d<tol+softRange){ const t=(d-tol)/softRange; px[i+3]=Math.round(px[i+3]*t); } }
   }
   ctx.putImageData(data,0,0); return c;
 }
@@ -701,10 +791,11 @@ function setBgColor(rgb){
 }
 function showOriginalForPick(){
   const c=els.hmCanvas; c.width=state.image.width; c.height=state.image.height;
-  c.getContext('2d').drawImage(state.image,0,0);
+  const ctx=c.getContext('2d'); ctx.drawImage(state.image,0,0);
+  state._pickSnapshot=ctx.getImageData(0,0,c.width,c.height);
   els.hmInfo.textContent='click to pick'; c.style.cursor='crosshair';
 }
-function exitPickMode(){state.bgPickMode=false;els.bgPick.style.background='';els.bgPick.style.color='';els.hmCanvas.style.cursor='';}
+function exitPickMode(){state.bgPickMode=false;state._pickSnapshot=null;els.bgPick.style.background='';els.bgPick.style.color='';els.hmCanvas.style.cursor='';}
 
 els.bgEnable.addEventListener('change',()=>{
   els.bgControls.style.display=els.bgEnable.checked?'block':'none';
@@ -714,16 +805,16 @@ els.bgEnable.addEventListener('change',()=>{
 els.bgTol.addEventListener('input',()=>{els.bgTolVal.textContent=els.bgTol.value;if(state.image && els.bgEnable.checked)regenerate();});
 els.bgSoft.addEventListener('change',()=>{if(state.image && els.bgEnable.checked)regenerate();});
 els.bgAuto.addEventListener('click',()=>{
-  if(!state.image){toast('Load an image first','error');return;}
+  if(!state.image){toast('Drop an image first, then sample background','error');return;}
   setBgColor(autoSampleBg(state.image));
   if(!els.bgEnable.checked){els.bgEnable.checked=true;els.bgControls.style.display='block';}
-  regenerate(); toast('Background sampled','success');
+  regenerate(); toast('Background color locked in','success');
 });
 els.bgPick.addEventListener('click',()=>{
-  if(!state.image){toast('Load an image first','error');return;}
+  if(!state.image){toast('Drop an image first','error');return;}
   if(state.bgPickMode){exitPickMode();drawHeightmapPreview();return;}
   state.bgPickMode=true; els.bgPick.style.background='var(--gold)'; els.bgPick.style.color='var(--black)';
-  showOriginalForPick(); toast('Click image to pick color');
+  showOriginalForPick(); toast('Click anywhere on the image to pick that color');
 });
 
 /* HEIGHTMAP */
@@ -751,12 +842,13 @@ function regenerate(){
     const r=data[idx],g=data[idx+1],b=data[idx+2],a=data[idx+3];
     alphaMap[i*cols+j]=a;
     let lum=(0.299*r+0.587*g+0.114*b)/255;
-    if(!useSilhouette && a<128) lum=0;
+    if(a<128) lum=0;
     hm[i*cols+j]=lum;
   }
-  if(els.invert.checked) for(let i=0;i<hm.length;i++) hm[i]=1-hm[i];
+  if(els.invert.checked) for(let i=0;i<hm.length;i++) hm[i]=alphaMap[i]<128?0:1-hm[i];
   const passes=parseInt(els.smoothIn.value,10);
   for(let p=0;p<passes;p++) hm=boxBlur(hm,rows,cols);
+  if(useSilhouette) for(let i=0;i<hm.length;i++) if(alphaMap[i]<128) hm[i]=0;
 
   state.heightmap=hm; state.hmRows=rows; state.hmCols=cols; state.alphaMap=alphaMap;
 
@@ -768,8 +860,8 @@ function regenerate(){
       if(a>=128){mask[i*cC+j]=1;masked++;}
     }
     state.mask=mask;
-    if(masked===0) toast('Cut to subject: nothing visible','error');
-    else if(masked===cR*cC) toast('Cut to subject needs background removal first','error');
+    if(masked===0) toast('Cut to subject: nothing left to print — lower the tolerance','error');
+    else if(masked===cR*cC) toast('Turn on Background Removal first, then Cut to Subject','error');
   } else state.mask=null;
 
   drawHeightmapPreview(); buildThreePreview(); updateStats();
@@ -802,14 +894,16 @@ function drawHeightmapPreview(){
 }
 
 els.hmCanvas.addEventListener('click',e=>{
-  if(!state.bgPickMode||!state.image) return;
+  if(!state.bgPickMode||!state.image||!state._pickSnapshot) return;
   const rect=els.hmCanvas.getBoundingClientRect();
   const x=Math.floor((e.clientX-rect.left)*els.hmCanvas.width/rect.width);
   const y=Math.floor((e.clientY-rect.top)*els.hmCanvas.height/rect.height);
-  const p=els.hmCanvas.getContext('2d').getImageData(x,y,1,1).data;
-  setBgColor({r:p[0],g:p[1],b:p[2]}); exitPickMode();
+  const w=state._pickSnapshot.width;
+  const i=(y*w+x)*4;
+  const d=state._pickSnapshot.data;
+  setBgColor({r:d[i],g:d[i+1],b:d[i+2]}); exitPickMode();
   if(!els.bgEnable.checked){els.bgEnable.checked=true;els.bgControls.style.display='block';}
-  regenerate(); toast('Color picked','success');
+  regenerate(); toast('Color locked in','success');
 });
 
 /* THREE.JS */
@@ -832,17 +926,25 @@ function initThree(){
   const grid=new THREE.GridHelper(200,20,0xC6A54B,0x222018);
   grid.material.opacity=0.18; grid.material.transparent=true;
   scene.add(grid);
-  three={scene,camera,renderer,controls,mesh:null};
-  function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);}
+  let needsRender=true;
+  controls.addEventListener('change',()=>{needsRender=true;});
+  three={scene,camera,renderer,controls,mesh:null,setNeedsRender:()=>{needsRender=true;}};
+  function loop(){
+    requestAnimationFrame(loop);
+    if(document.hidden) return;
+    controls.update();
+    if(needsRender){renderer.render(scene,camera);needsRender=false;}
+  }
   loop();
-  window.addEventListener('resize',()=>{const w=c.clientWidth,h=c.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);});
+  const onResize=()=>{const w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);needsRender=true;};
+  window.addEventListener('resize',onResize);
 }
 function buildThreePreview(){
   if(!three) initThree();
   if(three.mesh){three.scene.remove(three.mesh);three.mesh.geometry.dispose();three.mesh.material.dispose();}
   const params=readParams();
   const geometry=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
-  const material=new THREE.MeshStandardMaterial({color:0xC6A54B,roughness:0.45,metalness:0.35,flatShading:false});
+  const material=new THREE.MeshStandardMaterial({color:0xC6A54B,roughness:0.45,metalness:0.35,flatShading:true});
   const mesh=new THREE.Mesh(geometry,material);
   three.scene.add(mesh); three.mesh=mesh;
   const box=new THREE.Box3().setFromObject(mesh);
@@ -851,6 +953,7 @@ function buildThreePreview(){
   three.controls.target.copy(center);
   three.camera.position.set(center.x+maxDim*1.2,center.y+maxDim*1.0,center.z+maxDim*1.2);
   three.camera.lookAt(center);
+  three.setNeedsRender();
 }
 function readParams(){return{width:parseFloat(els.widthIn.value),base:parseFloat(els.baseIn.value),maxHeight:parseFloat(els.heightIn.value),negative:els.negative.checked};}
 
@@ -1012,6 +1115,9 @@ function setUnlocked(unlocked){
   state.unlocked=unlocked;
   els.paywall.style.display = unlocked ? 'none' : 'block';
   els.paywallUnlocked.style.display = unlocked ? 'block' : 'none';
+  if(unlocked && !localStorage.getItem(UNLOCK_KEY)){
+    localStorage.setItem(UNLOCK_KEY, 'unlocked-' + Date.now());
+  }
 }
 
 function checkUnlockOnLoad(){
@@ -1019,9 +1125,8 @@ function checkUnlockOnLoad(){
   const params=new URLSearchParams(window.location.search);
   const paidFlag = params.get('paid') || params.get('success') || params.get('checkout_session_id') || params.get('session_id');
   if(paidFlag){
-    sessionStorage.setItem(UNLOCK_KEY, 'stripe-' + Date.now());
     setUnlocked(true);
-    toast('Payment received — download unlocked','success');
+    toast('Payment received · STL unlocked. Thank you.','success');
     // Clean the URL
     const clean=new URL(window.location.href);
     ['paid','success','checkout_session_id','session_id'].forEach(k=>clean.searchParams.delete(k));
@@ -1033,24 +1138,12 @@ function checkUnlockOnLoad(){
   }
 }
 
-function setUnlockedPersistent(){
-  localStorage.setItem(UNLOCK_KEY, 'unlocked-' + Date.now());
-  setUnlocked(true);
-}
-
-// Override setUnlocked to also persist when called via redirect path
-const _origSetUnlocked = setUnlocked;
-setUnlocked = function(unlocked){
-  _origSetUnlocked(unlocked);
-  if(unlocked) localStorage.setItem(UNLOCK_KEY, localStorage.getItem(UNLOCK_KEY) || ('unlocked-' + Date.now()));
-};
-
 // "I already paid" escape hatch — in case Stripe doesn't redirect with a flag
 els.haveAccessBtn.addEventListener('click', ()=>{
-  const ok = confirm('Confirm: have you completed payment via Stripe?\n\nClick OK to unlock your download. (Refunds available if there\'s an issue — email jason@designmainline.com)');
+  const ok = confirm('You\'ll get instant access. If your Stripe receipt doesn\'t match, email jason@designmainline.com and we\'ll sort it out — no charge dispute needed.\n\nUnlock download now?');
   if(ok){
-    setUnlockedPersistent();
-    toast('Download unlocked','success');
+    setUnlocked(true);
+    toast('Unlocked. Generate your STL.','success');
   }
 });
 
@@ -1060,7 +1153,7 @@ els.generateBtn.addEventListener('click',()=>{
   const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
   const blob=exportSTL(geo);
   download(blob,(state.imageName||'igrinder')+'.stl');
-  toast(`STL exported · ${formatBytes(blob.size)}`,'success');
+  toast(`STL forged · ${formatBytes(blob.size)} · ready to slice`,'success');
   geo.dispose();
 });
 els.downloadObjBtn.addEventListener('click',()=>{
@@ -1069,26 +1162,72 @@ els.downloadObjBtn.addEventListener('click',()=>{
   const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
   const blob=exportOBJ(geo);
   download(blob,(state.imageName||'igrinder')+'.obj');
-  toast(`OBJ exported · ${formatBytes(blob.size)}`,'success');
+  toast(`OBJ forged · ${formatBytes(blob.size)}`,'success');
   geo.dispose();
 });
 
 checkUnlockOnLoad();
 
-/* TAB SWITCHING */
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const target=btn.dataset.tab;
-    document.querySelectorAll('.tab-btn').forEach(b=>{
-      const on=b.dataset.tab===target;
-      b.classList.toggle('active',on);
-      b.setAttribute('aria-selected',on?'true':'false');
-    });
-    document.querySelectorAll('.tab-pane').forEach(p=>{
-      p.hidden=p.dataset.tab!==target;
-      p.classList.toggle('active',p.dataset.tab===target);
-    });
+/* TAB SWITCHING with keyboard arrow nav */
+const tabBtns=[...document.querySelectorAll('.tab-btn')];
+function activateTab(target){
+  tabBtns.forEach(b=>{
+    const on=b.dataset.tab===target;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+    b.setAttribute('tabindex',on?'0':'-1');
   });
+  document.querySelectorAll('.tab-pane').forEach(p=>{
+    p.hidden=p.dataset.tab!==target;
+    p.classList.toggle('active',p.dataset.tab===target);
+  });
+}
+tabBtns.forEach((btn,i)=>{
+  btn.addEventListener('click',()=>activateTab(btn.dataset.tab));
+  btn.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+      e.preventDefault();
+      const dir=e.key==='ArrowRight'?1:-1;
+      const next=tabBtns[(i+dir+tabBtns.length)%tabBtns.length];
+      next.focus(); activateTab(next.dataset.tab);
+    } else if(e.key==='Home'){e.preventDefault();tabBtns[0].focus();activateTab(tabBtns[0].dataset.tab);}
+    else if(e.key==='End'){e.preventDefault();const last=tabBtns[tabBtns.length-1];last.focus();activateTab(last.dataset.tab);}
+  });
+});
+
+/* PRESET ARIA SYNC */
+els.presetRow.addEventListener('click',e=>{
+  const btn=e.target.closest('.preset-card');
+  if(!btn) return;
+  els.presetRow.querySelectorAll('.preset-card').forEach(c=>c.setAttribute('aria-checked',c===btn?'true':'false'));
+});
+
+/* DROP ZONE — keyboard support */
+els.dropZone.addEventListener('keydown',e=>{
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();els.fileInput.click();}
+});
+
+/* TOUCH HINT — replaces drag-and-drop copy on touch devices */
+if('ontouchstart' in window){
+  const d=document.querySelector('.drop-desktop');
+  if(d) d.textContent='Tap to choose an image';
+}
+
+/* SAMPLE IMAGE — small embedded heightmap-friendly sample (concentric rings) */
+const SAMPLE_DATA_URL='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="#fff"/><circle cx="200" cy="200" r="140" fill="#000"/><circle cx="200" cy="200" r="100" fill="#fff"/><circle cx="200" cy="200" r="60" fill="#000"/><circle cx="200" cy="200" r="22" fill="#fff"/></svg>');
+const trySampleBtn=document.getElementById('trySampleBtn');
+if(trySampleBtn) trySampleBtn.addEventListener('click',()=>{
+  const img=new Image();
+  img.onload=()=>{
+    state.image=img; state.imageName='igrinder-sample';
+    els.hmEmpty.style.display='none'; els.threeEmpty.style.display='none';
+    els.generateBtn.disabled=false; els.downloadObjBtn.disabled=false;
+    els.fileName.textContent='✓ Sample loaded'; els.fileName.style.display='block';
+    els.dropZone.classList.add('has-file');
+    regenerate();
+    toast('Sample loaded · drop your own to replace','success');
+  };
+  img.src=SAMPLE_DATA_URL;
 });
 </script>
 </body>
