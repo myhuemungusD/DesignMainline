@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mainline Forge — 2D Image to 3D STL · Design Mainline</title>
+<meta name="description" content="Turn any 2D image into a 3D-printable STL. Edit in Blender, slice in Cura, print on your 3D printer. $9 one-time download — no subscription, no watermark.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://js.stripe.com/v3/buy-button.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#8B7332;
+  --black:#060606;--surface:#0C0C0C;--card:#111111;--card-hover:#161616;
+  --border:rgba(198,165,75,0.1);--border-strong:rgba(198,165,75,0.25);
+  --white:#F2ECE0;--muted:#8A8070;--danger:#D9534F;--success:#7FB069;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;font-weight:300;background:var(--black);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+.gold{color:var(--gold)}
+
+/* NAV — same shape as main site */
+nav{position:sticky;top:0;width:100%;z-index:1000;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;background:rgba(6,6,6,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.9rem;text-decoration:none}
+.nav-logo svg{width:32px;height:32px}
+.nav-wordmark{font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.nav-sub{font-family:'Outfit',sans-serif;font-weight:300;font-size:.65rem;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;padding-left:.9rem;margin-left:.4rem;border-left:1px solid var(--border-strong)}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.72rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--gold)}
+.nav-back{display:inline-flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;transition:color .3s}
+.nav-back:hover{color:var(--gold)}
+
+/* HERO STRIP */
+.tool-hero{padding:3rem 2rem 1.5rem;text-align:center;border-bottom:1px solid var(--border);position:relative}
+.tool-hero .hero-glow{position:absolute;width:560px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.06) 0%,transparent 65%);top:0;left:50%;transform:translate(-50%,-25%);pointer-events:none}
+.tool-badge{display:inline-flex;align-items:center;gap:.6rem;padding:.4rem 1.2rem;border:1px solid var(--border-strong);border-radius:100px;font-size:.62rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tool-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.15;letter-spacing:.02em;margin-bottom:.6rem;position:relative;z-index:2}
+.tool-sub{color:var(--muted);font-size:.92rem;max-width:580px;margin:0 auto;position:relative;z-index:2}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:340px 1fr;gap:0;min-height:calc(100vh - 220px)}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.75rem 1.5rem;overflow-y:auto}
+.main{padding:1.75rem 2rem;display:flex;flex-direction:column;gap:1.25rem}
+
+/* SECTION LABELS */
+.s-label{font-size:.62rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.85rem;display:flex;align-items:center;gap:.7rem}
+.s-label::before{content:'';width:18px;height:1px;background:var(--gold)}
+.group{margin-bottom:1.5rem}
+
+/* DROP ZONE */
+.drop{border:1px dashed var(--border-strong);padding:1.1rem;text-align:center;transition:all .3s;cursor:pointer;background:rgba(198,165,75,.02)}
+.drop:hover,.drop.dragover{border-color:var(--gold);background:rgba(198,165,75,.06)}
+.drop p{margin:.3rem 0;font-size:.78rem;color:var(--muted)}
+.drop .hint{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dark)}
+.drop input{display:none}
+.upload-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.85rem;background:transparent;color:var(--gold);border:1px solid var(--gold);font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:all .3s;margin-bottom:.6rem}
+.upload-btn:hover{background:var(--gold);color:var(--black)}
+.file-name{font-size:.7rem;color:var(--gold);margin:.6rem 0 0;word-break:break-all;display:none;font-family:'Outfit',monospace}
+
+/* FIELDS */
+.field{margin-bottom:.85rem}
+.field label{display:flex;justify-content:space-between;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.field label .val{color:var(--gold);font-variant-numeric:tabular-nums;font-weight:500;letter-spacing:0;text-transform:none}
+.field input[type=number],.field input[type=text],.field select{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);padding:.6rem .7rem;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:300;outline:none;transition:border-color .3s}
+.field input[type=number]:focus,.field input[type=text]:focus,.field select:focus{border-color:var(--gold)}
+.field input[type=range]{width:100%;height:2px;-webkit-appearance:none;appearance:none;background:var(--border-strong);outline:none;margin:.5rem 0}
+.field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--gold);border:none;cursor:pointer;border-radius:50%}
+.field input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--gold);border:none;cursor:pointer;border-radius:50%}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.field select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23C6A54B' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2rem}
+
+.checkbox{display:flex;align-items:center;gap:.6rem;font-size:.78rem;cursor:pointer;user-select:none;margin-bottom:.55rem;color:var(--white)}
+.checkbox input{accent-color:var(--gold);width:14px;height:14px}
+
+/* PRESET CARDS */
+.preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.6rem}
+.preset-card{padding:.6rem .4rem;background:var(--card);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .3s;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.preset-card:hover{border-color:var(--border-strong);color:var(--white)}
+.preset-card.active{border-color:var(--gold);background:rgba(198,165,75,.06);color:var(--gold)}
+
+/* BUTTONS */
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:1rem;background:var(--gold);color:var(--black);border:none;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-100%);transition:transform .6s}
+.btn-primary:hover::before{transform:translateX(100%)}
+.btn-primary:hover:not(:disabled){background:var(--gold-light)}
+.btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.75rem;background:transparent;color:var(--white);border:1px solid var(--border-strong);font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .35s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-secondary{display:inline-flex;align-items:center;justify-content:center;padding:.5rem;background:var(--card);color:var(--muted);border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+/* PAYWALL CTA */
+.paywall{background:linear-gradient(135deg,rgba(198,165,75,.06),rgba(198,165,75,.02));border:1px solid var(--border-strong);padding:1.1rem;margin-top:1rem}
+.paywall-title{font-family:'Cinzel',serif;font-size:.95rem;font-weight:500;margin-bottom:.4rem}
+.paywall-price{font-family:'Cinzel',serif;font-size:1.6rem;font-weight:600;color:var(--gold);line-height:1}
+.paywall-price small{font-family:'Outfit',sans-serif;font-size:.6rem;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-left:.5rem;display:inline-block}
+.paywall-desc{font-size:.72rem;color:var(--muted);margin:.6rem 0 1rem;line-height:1.6}
+.paywall-features{list-style:none;margin:.8rem 0 1rem;font-size:.7rem;color:var(--muted)}
+.paywall-features li{padding:.25rem 0;display:flex;align-items:center;gap:.55rem}
+.paywall-features li::before{content:'◆';color:var(--gold);font-size:.45rem}
+.paywall.unlocked{background:linear-gradient(135deg,rgba(127,176,105,.08),rgba(127,176,105,.02));border-color:rgba(127,176,105,.3)}
+.paywall.unlocked .paywall-title{color:var(--success)}
+.paywall.unlocked .paywall-price{color:var(--success)}
+
+/* PREVIEW */
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:780px){.preview-grid{grid-template-columns:1fr}}
+.preview-box{background:var(--card);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.preview-box .pv-corner{position:absolute;width:16px;height:16px;border:1px solid var(--gold);opacity:.4;pointer-events:none;z-index:3}
+.preview-box .pv-corner.tl{top:6px;left:6px;border-right:none;border-bottom:none}
+.preview-box .pv-corner.tr{top:6px;right:6px;border-left:none;border-bottom:none}
+.preview-box .pv-corner.bl{bottom:6px;left:6px;border-right:none;border-top:none}
+.preview-box .pv-corner.br{bottom:6px;right:6px;border-left:none;border-top:none}
+.preview-box .title{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding:.7rem .9rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface)}
+.preview-box .title .pv-info{color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.1em}
+.preview-box .body{flex:1;display:flex;align-items:center;justify-content:center;padding:.8rem;min-height:340px;position:relative;background:#000}
+#heightmapCanvas{max-width:100%;max-height:100%;image-rendering:pixelated}
+#threeContainer{width:100%;height:100%;min-height:340px;cursor:grab}
+#threeContainer:active{cursor:grabbing}
+.empty{color:var(--muted);font-size:.78rem;text-align:center;letter-spacing:.05em;font-family:'Cinzel',serif;font-weight:400}
+
+/* STATS HUD */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;background:var(--surface);border:1px solid var(--border);padding:.9rem}
+.stat .label{color:var(--muted);text-transform:uppercase;font-size:.58rem;letter-spacing:.2em;margin-bottom:.25rem}
+.stat .value{color:var(--white);font-weight:500;font-variant-numeric:tabular-nums;font-size:.85rem}
+.stat .value.gold{color:var(--gold)}
+
+/* TIPS */
+.tips{background:var(--surface);border:1px solid var(--border);padding:1.1rem 1.3rem;font-size:.78rem;color:var(--muted);line-height:1.7}
+.tips strong{color:var(--white);font-weight:500;font-family:'Cinzel',serif;letter-spacing:.04em}
+.tips ul{margin:.5rem 0;padding-left:1.1rem}
+.tips li{padding:.15rem 0}
+.tips li strong{color:var(--gold);font-family:'Outfit',sans-serif}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid var(--border-strong);color:var(--white);padding:.8rem 1.3rem;font-size:.78rem;letter-spacing:.04em;opacity:0;pointer-events:none;transition:all .25s;z-index:1100}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:var(--danger);color:var(--danger)}
+.toast.success{border-color:var(--success);color:var(--success)}
+
+/* COLOR SWATCH */
+.bg-row{display:flex;gap:.5rem;align-items:center;margin:.5rem 0 .7rem}
+.bg-swatch{width:26px;height:26px;border:1px solid var(--border-strong);background:#fff;flex-shrink:0}
+.bg-hex{font-size:.7rem;color:var(--muted);font-family:'Outfit',monospace;letter-spacing:.04em}
+
+/* FOOTER */
+footer{padding:2rem;border-top:1px solid var(--border);text-align:center;font-size:.7rem;color:var(--muted);letter-spacing:.05em}
+footer a{color:var(--gold);text-decoration:none}
+
+/* PRINT TRIANGLE WATERMARK in 3D viewport */
+.viewport-mark{position:absolute;bottom:.7rem;right:.9rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--gold);opacity:.5;text-transform:uppercase;pointer-events:none;z-index:2}
+
+/* HERO PIPELINE */
+.hero-pipeline{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.6rem;position:relative;z-index:2}
+.pipe-step{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .9rem;border:1px solid var(--border-strong);background:rgba(198,165,75,.03)}
+.pipe-num{font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold);font-weight:600;letter-spacing:.04em}
+.pipe-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white)}
+.pipe-arrow{color:var(--gold-dark);font-size:.85rem;letter-spacing:0}
+@media(max-width:680px){.hero-pipeline{gap:.4rem}.pipe-step{padding:.3rem .55rem}.pipe-arrow{font-size:.7rem}}
+
+/* STRIPE BUY BUTTON WRAP */
+.stripe-button-wrap{display:flex;justify-content:center;margin:.4rem 0 .2rem;min-height:42px}
+.stripe-button-wrap stripe-buy-button{display:block;width:100%}
+
+/* WHY I BUILT THIS */
+.why-box{background:var(--surface);border:1px solid var(--border);padding:1.5rem 1.6rem;position:relative}
+.why-box::before{content:'';position:absolute;top:0;left:0;width:60px;height:1px;background:var(--gold)}
+.why-box .why-lead{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:500;color:var(--white);margin-bottom:1rem;line-height:1.4;letter-spacing:.01em}
+.why-box p{color:var(--muted);font-size:.86rem;line-height:1.85;margin-bottom:.85rem}
+.why-box p strong{color:var(--white);font-weight:500}
+.why-box .why-sig{margin-top:1.1rem;margin-bottom:0;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+
+/* WHAT YOU CAN MAKE */
+.what-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+@media(max-width:780px){.what-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.what-grid{grid-template-columns:1fr}}
+.what-card{background:var(--card);border:1px solid var(--border);padding:1.2rem 1.1rem;transition:all .35s}
+.what-card:hover{border-color:var(--border-strong);background:var(--card-hover);transform:translateY(-2px)}
+.what-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border-strong);color:var(--gold);margin-bottom:.9rem}
+.what-icon svg{width:18px;height:18px}
+.what-card h4{font-family:'Cinzel',serif;font-size:.92rem;font-weight:500;color:var(--white);margin-bottom:.5rem;letter-spacing:.02em}
+.what-card p{font-size:.74rem;color:var(--muted);line-height:1.7}
+
+/* WORKFLOW LIST */
+.workflow-list{margin:.6rem 0 0;padding-left:0;list-style:none;counter-reset:wf}
+.workflow-list li{counter-increment:wf;position:relative;padding:.6rem 0 .6rem 2.6rem;border-bottom:1px solid var(--border);font-size:.82rem;color:var(--muted);line-height:1.7}
+.workflow-list li:last-child{border-bottom:none}
+.workflow-list li::before{content:counter(wf,decimal-leading-zero);position:absolute;left:0;top:.55rem;font-family:'Cinzel',serif;font-size:.95rem;font-weight:600;color:var(--gold);letter-spacing:.05em}
+.workflow-list li strong{color:var(--white);font-weight:500}
+
+@media(max-width:600px){
+  .tool-hero{padding:2rem 1.25rem 1rem}
+  .sidebar{padding:1.25rem 1rem}
+  .main{padding:1.25rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 8L88 73H12L50 8Z" stroke="#C6A54B" stroke-width="2" fill="none"/><path d="M50 22L76 68H24L50 22Z" stroke="#C6A54B" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="50" cy="8" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="12" cy="73" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="88" cy="73" r="2" fill="#C6A54B" opacity="0.6"/></svg>
+    <span class="nav-wordmark">Design Mainline</span>
+    <span class="nav-sub">Forge</span>
+  </a>
+  <a href="/" class="nav-back">← Back to Studio</a>
+</nav>
+
+<section class="tool-hero">
+  <div class="hero-glow"></div>
+  <div class="tool-badge"><span class="badge-dot"></span> Mainline Forge · 2D → 3D STL Generator</div>
+  <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span></h1>
+  <p class="tool-sub">Built by a maker, for makers. Drop a photo, logo, or sketch — get a clean STL ready to refine in Blender, slice in Cura, and print on your home 3D printer. Live preview is free. $9 unlocks the file.</p>
+  <div class="hero-pipeline">
+    <span class="pipe-step"><span class="pipe-num">01</span><span class="pipe-label">Image</span></span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-step"><span class="pipe-num">02</span><span class="pipe-label">STL</span></span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-step"><span class="pipe-num">03</span><span class="pipe-label">Blender</span></span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-step"><span class="pipe-num">04</span><span class="pipe-label">Cura</span></span>
+    <span class="pipe-arrow">→</span>
+    <span class="pipe-step"><span class="pipe-num">05</span><span class="pipe-label">Print</span></span>
+  </div>
+</section>
+
+<div class="layout">
+  <aside class="sidebar">
+    <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg" style="display:none" />
+
+    <button class="upload-btn" id="uploadBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Choose Image
+    </button>
+    <div class="drop" id="dropZone">
+      <p>or drag &amp; drop</p>
+      <p class="hint">PNG · JPG · 10MB max</p>
+    </div>
+    <div class="file-name" id="fileName"></div>
+
+    <div class="group" style="margin-top:1.4rem">
+      <div class="s-label">Preset</div>
+      <div class="preset-row" id="presetRow">
+        <div class="preset-card active" data-preset="relief">Relief</div>
+        <div class="preset-card" data-preset="litho">Lithophane</div>
+        <div class="preset-card" data-preset="emboss">Emboss</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="s-label">Dimensions · mm</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Width <span class="val" id="widthVal">100</span></label>
+          <input type="number" id="widthIn" value="100" min="10" max="500" step="1" />
+        </div>
+        <div class="field">
+          <label>Base <span class="val" id="baseVal">1.0</span></label>
+          <input type="number" id="baseIn" value="1.0" min="0.4" max="10" step="0.1" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Relief Height <span class="val"><span id="heightVal">3.0</span> mm</span></label>
+        <input type="range" id="heightIn" value="3.0" min="0.4" max="20" step="0.1" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="s-label">Detail</div>
+      <div class="field">
+        <label>Resolution <span class="val"><span id="resVal">200</span> px</span></label>
+        <input type="range" id="resIn" value="200" min="50" max="400" step="10" />
+      </div>
+      <div class="field">
+        <label>Smoothing <span class="val" id="smoothVal">0</span></label>
+        <input type="range" id="smoothIn" value="0" min="0" max="3" step="1" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="s-label">Background Removal</div>
+      <label class="checkbox"><input type="checkbox" id="bgEnable" /><span>Remove background</span></label>
+      <div id="bgControls" style="display:none">
+        <div class="bg-row">
+          <div class="bg-swatch" id="bgSwatch"></div>
+          <span class="bg-hex" id="bgColorLabel">#FFFFFF</span>
+        </div>
+        <div class="field-row" style="margin-bottom:.7rem">
+          <button class="btn-secondary" id="bgAuto" type="button">Auto Sample</button>
+          <button class="btn-secondary" id="bgPick" type="button">Pick Color</button>
+        </div>
+        <div class="field">
+          <label>Tolerance <span class="val" id="bgTolVal">40</span></label>
+          <input type="range" id="bgTol" value="40" min="0" max="180" step="1" />
+        </div>
+        <label class="checkbox"><input type="checkbox" id="bgSoft" checked /><span>Soft edges</span></label>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="s-label">Modifiers</div>
+      <label class="checkbox"><input type="checkbox" id="invert" /><span>Invert (dark = tall)</span></label>
+      <label class="checkbox"><input type="checkbox" id="negative" /><span>Negative / deboss</span></label>
+      <label class="checkbox"><input type="checkbox" id="mirror" /><span>Mirror horizontally</span></label>
+      <label class="checkbox"><input type="checkbox" id="silhouette" /><span>Cut to subject</span></label>
+    </div>
+
+    <!-- PAYWALL -->
+    <div class="paywall" id="paywall">
+      <div class="paywall-title">Unlock Download</div>
+      <div class="paywall-price">$9<small>One-Time</small></div>
+      <ul class="paywall-features">
+        <li>Binary STL — print-ready</li>
+        <li>OBJ — for Blender / Meshmixer</li>
+        <li>Yours to print, sell, or modify</li>
+        <li>No watermark · No subscription</li>
+      </ul>
+      <p class="paywall-desc" style="margin:.4rem 0 .8rem">After payment, return to this tab — your download unlocks automatically.</p>
+      <div class="stripe-button-wrap">
+        <stripe-buy-button
+          buy-button-id="buy_btn_1TQnYKD7tGQxpyHP9PcVeEmE"
+          publishable-key="pk_live_51RiyeZD7tGQxpyHPToc5vjdnnhaHXAJgJ3rwtXB4pV3pv71xPx5CWq4lCRTpI56jJkWwjFdMuWWVs93gVK2FOBzA006WxolJtU"
+        ></stripe-buy-button>
+      </div>
+      <button class="btn-ghost" id="haveAccessBtn" style="margin-top:.6rem;font-size:.62rem">I already paid — unlock</button>
+    </div>
+
+    <!-- POST-PAYMENT (hidden until unlocked) -->
+    <div class="paywall unlocked" id="paywallUnlocked" style="display:none;margin-top:.6rem">
+      <div class="paywall-title">✓ Unlocked</div>
+      <p class="paywall-desc">Thank you. Open in Blender to refine, then export and slice in Cura.</p>
+      <button class="btn-primary" id="generateBtn" style="margin-bottom:.5rem">Download STL</button>
+      <button class="btn-ghost" id="downloadObjBtn">Download OBJ</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="preview-grid">
+      <div class="preview-box">
+        <span class="pv-corner tl"></span><span class="pv-corner tr"></span>
+        <span class="pv-corner bl"></span><span class="pv-corner br"></span>
+        <div class="title"><span>Heightmap</span><span class="pv-info" id="hmInfo"></span></div>
+        <div class="body">
+          <canvas id="heightmapCanvas"></canvas>
+          <div class="empty" id="hmEmpty">Drop an image to begin</div>
+        </div>
+      </div>
+      <div class="preview-box">
+        <span class="pv-corner tl"></span><span class="pv-corner tr"></span>
+        <span class="pv-corner bl"></span><span class="pv-corner br"></span>
+        <div class="title"><span>3D Preview</span><span class="pv-info">drag · scroll</span></div>
+        <div class="body">
+          <div id="threeContainer"></div>
+          <div class="empty" id="threeEmpty" style="position:absolute">Awaiting source</div>
+          <div class="viewport-mark">Mainline Forge</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><div class="label">Source</div><div class="value" id="statSource">—</div></div>
+      <div class="stat"><div class="label">Grid</div><div class="value" id="statGrid">—</div></div>
+      <div class="stat"><div class="label">Triangles</div><div class="value gold" id="statTris">—</div></div>
+      <div class="stat"><div class="label">STL Size</div><div class="value" id="statSize">—</div></div>
+      <div class="stat"><div class="label">Print Volume</div><div class="value gold" id="statVol">—</div></div>
+    </div>
+
+    <!-- WHY I BUILT THIS -->
+    <div class="why-box">
+      <div class="s-label" style="margin-bottom:1rem">Why I Built This</div>
+      <p class="why-lead">I 3D-print a lot. The bottleneck was always the same — turning a flat image into a usable mesh.</p>
+      <p>Existing tools were either expensive subscription SaaS, broken open-source experiments, or marketplaces that wanted a cut of every download. I wanted something <strong>fast, no-account, no-subscription</strong> — drop an image, see it in 3D, pay once, get the file. So I built it.</p>
+      <p>Mainline Forge gives you a clean heightmap mesh with proper walls and a flat base — manifold, watertight, ready for the next step. <strong>Edit it in Blender</strong> (decimate, smooth, boolean cut, add text), then <strong>slice in Cura</strong> and print. That's the loop.</p>
+      <p class="why-sig">— Jason Hamilton · Design Mainline</p>
+    </div>
+
+    <!-- WHAT YOU CAN MAKE -->
+    <div class="what-grid">
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+        </div>
+        <h4>Lithophanes</h4>
+        <p>Photos that come alive when backlit. Use the Lithophane preset, print vertical in white PLA, drop an LED behind it.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="18" height="10" rx="1"/><path d="M7 11h10M7 14h6"/></svg>
+        </div>
+        <h4>Logo Reliefs &amp; Signage</h4>
+        <p>Embossed nameplates, business signs, branded coasters. Use Emboss preset for a 1–2mm raised mark on a thick base.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+        </div>
+        <h4>Architectural Models</h4>
+        <p>Topo maps, floor plans, building elevations. Drop a heightmap PNG and get a real, dimensional model.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/></svg>
+        </div>
+        <h4>Portraits &amp; Pet Reliefs</h4>
+        <p>Turn a photo of a person, pet, or anything you love into a tactile relief. Use Cut to Subject for a clean silhouette.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h4>Game Tokens &amp; Miniatures</h4>
+        <p>Custom D&amp;D bases, board game pieces, faction crests. Negative-deboss for inset details.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 4v16M4 8h16"/></svg>
+        </div>
+        <h4>Tiles &amp; Wall Art</h4>
+        <p>Tessellating wall panels, decorative tiles, modern bas-relief art. Print, paint, mount.</p>
+      </div>
+    </div>
+
+    <!-- WORKFLOW -->
+    <div class="tips">
+      <strong>The 5-Step Workflow</strong>
+      <ol class="workflow-list">
+        <li><strong>Upload</strong> — PNG or JPG. Higher contrast = better depth. Flat lighting helps.</li>
+        <li><strong>Tune</strong> — pick a preset, then dial width, base, and relief height in mm. Live 3D preview updates instantly.</li>
+        <li><strong>Pay &amp; Download STL</strong> — $9 unlocks both STL and OBJ. Yours to keep.</li>
+        <li><strong>Edit in Blender</strong> (optional) — Import STL → Edit Mode → smooth, decimate, boolean-cut, add base text, then export a new STL.</li>
+        <li><strong>Slice in Cura</strong> — File → Open → STL → orient flat (relief/emboss) or vertical (lithophane) → slice → save G-code → print.</li>
+      </ol>
+      <strong style="display:block;margin-top:1rem">Preset Cheat Sheet</strong>
+      <ul>
+        <li><strong>Relief:</strong> portraits &amp; logos with depth — print flat, 0.12–0.16 mm layers, any color PLA.</li>
+        <li><strong>Lithophane:</strong> photos lit from behind — print vertical with brim, white PLA, 0.1 mm layers, 100% infill, ~3 mm thick.</li>
+        <li><strong>Emboss:</strong> small relief (1–2 mm) on a thick base — nameplates, badges, signage.</li>
+        <li><strong>Cut to Subject:</strong> turn on Background Removal first, then enable to follow the silhouette — no rectangular base.</li>
+      </ul>
+      <span style="display:block;margin-top:.8rem;font-size:.7rem;letter-spacing:.04em">Resolution above 300 produces files over 10 MB and slows slicing. 200 is the recommended default.</span>
+    </div>
+  </main>
+</div>
+
+<footer>
+  &copy; 2026 <a href="/">Design Mainline LLC</a> · Mainline Forge · Single-purchase license · Files yours to print, sell, or modify.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+'use strict';
+
+/* ============================================================
+   PAYWALL CONFIG
+   Uses Stripe Buy Button (no backend). After payment Stripe
+   redirects back here with ?paid=1 on the URL — that flips
+   the unlock. Also exposes an "I already paid" escape hatch
+   if the redirect ever fails.
+   ============================================================ */
+const UNLOCK_KEY = 'mainline_forge_unlock_v1';
+
+const els = {
+  fileInput: document.getElementById('fileInput'),
+  uploadBtn: document.getElementById('uploadBtn'),
+  fileName: document.getElementById('fileName'),
+  dropZone: document.getElementById('dropZone'),
+  presetRow: document.getElementById('presetRow'),
+  widthIn: document.getElementById('widthIn'),
+  baseIn: document.getElementById('baseIn'),
+  heightIn: document.getElementById('heightIn'),
+  resIn: document.getElementById('resIn'),
+  smoothIn: document.getElementById('smoothIn'),
+  invert: document.getElementById('invert'),
+  negative: document.getElementById('negative'),
+  mirror: document.getElementById('mirror'),
+  silhouette: document.getElementById('silhouette'),
+  bgEnable: document.getElementById('bgEnable'),
+  bgControls: document.getElementById('bgControls'),
+  bgSwatch: document.getElementById('bgSwatch'),
+  bgColorLabel: document.getElementById('bgColorLabel'),
+  bgAuto: document.getElementById('bgAuto'),
+  bgPick: document.getElementById('bgPick'),
+  bgTol: document.getElementById('bgTol'),
+  bgTolVal: document.getElementById('bgTolVal'),
+  bgSoft: document.getElementById('bgSoft'),
+  haveAccessBtn: document.getElementById('haveAccessBtn'),
+  generateBtn: document.getElementById('generateBtn'),
+  downloadObjBtn: document.getElementById('downloadObjBtn'),
+  paywall: document.getElementById('paywall'),
+  paywallUnlocked: document.getElementById('paywallUnlocked'),
+  hmCanvas: document.getElementById('heightmapCanvas'),
+  hmEmpty: document.getElementById('hmEmpty'),
+  hmInfo: document.getElementById('hmInfo'),
+  threeContainer: document.getElementById('threeContainer'),
+  threeEmpty: document.getElementById('threeEmpty'),
+  stats: document.getElementById('stats'),
+  statSource: document.getElementById('statSource'),
+  statGrid: document.getElementById('statGrid'),
+  statTris: document.getElementById('statTris'),
+  statSize: document.getElementById('statSize'),
+  statVol: document.getElementById('statVol'),
+  widthVal: document.getElementById('widthVal'),
+  baseVal: document.getElementById('baseVal'),
+  heightVal: document.getElementById('heightVal'),
+  resVal: document.getElementById('resVal'),
+  smoothVal: document.getElementById('smoothVal'),
+  toast: document.getElementById('toast'),
+};
+
+const state = {
+  image: null, imageName: '',
+  heightmap: null, hmRows: 0, hmCols: 0,
+  bgColor: { r: 255, g: 255, b: 255 },
+  bgPickMode: false,
+  alphaMap: null, mask: null,
+  unlocked: false,
+};
+
+let toastTimer;
+function toast(msg, type = '') {
+  els.toast.textContent = msg;
+  els.toast.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2400);
+}
+
+function syncLabels() {
+  els.widthVal.textContent = els.widthIn.value;
+  els.baseVal.textContent = parseFloat(els.baseIn.value).toFixed(1);
+  els.heightVal.textContent = parseFloat(els.heightIn.value).toFixed(1);
+  els.resVal.textContent = els.resIn.value;
+  els.smoothVal.textContent = els.smoothIn.value;
+}
+['input','change'].forEach(ev=>{
+  [els.widthIn,els.baseIn,els.heightIn,els.resIn,els.smoothIn].forEach(el=>el.addEventListener(ev,()=>{syncLabels();if(state.image)regenerate();}));
+  [els.invert,els.negative,els.mirror,els.silhouette].forEach(el=>el.addEventListener(ev,()=>{if(state.image)regenerate();}));
+});
+syncLabels();
+
+/* PRESET PILL CARDS */
+const PRESETS = {
+  relief:{w:100,base:1.0,h:3.0,res:200,inv:false,neg:false},
+  litho: {w:100,base:0.6,h:2.4,res:250,inv:true, neg:false},
+  emboss:{w:80, base:1.5,h:1.2,res:200,inv:false,neg:false},
+};
+els.presetRow.addEventListener('click', e=>{
+  const card = e.target.closest('.preset-card'); if(!card) return;
+  els.presetRow.querySelectorAll('.preset-card').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');
+  const p = PRESETS[card.dataset.preset];
+  els.widthIn.value=p.w; els.baseIn.value=p.base; els.heightIn.value=p.h; els.resIn.value=p.res;
+  els.invert.checked=p.inv; els.negative.checked=p.neg;
+  syncLabels();
+  if(state.image) regenerate();
+});
+
+/* FILE INPUT */
+els.uploadBtn.addEventListener('click',()=>els.fileInput.click());
+els.dropZone.addEventListener('click',()=>els.fileInput.click());
+els.fileInput.addEventListener('change',e=>{const f=e.target.files[0];if(f)loadFile(f);});
+['dragenter','dragover'].forEach(ev=>els.dropZone.addEventListener(ev,e=>{e.preventDefault();els.dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(ev=>els.dropZone.addEventListener(ev,e=>{e.preventDefault();els.dropZone.classList.remove('dragover');}));
+els.dropZone.addEventListener('drop',e=>{
+  const f=e.dataTransfer.files[0];
+  if(f && (f.type==='image/png'||f.type==='image/jpeg')) loadFile(f);
+  else toast('PNG or JPG only','error');
+});
+
+function loadFile(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      state.image=img;
+      state.imageName=file.name.replace(/\.[^.]+$/,'');
+      els.hmEmpty.style.display='none'; els.threeEmpty.style.display='none';
+      els.generateBtn.disabled=false; els.downloadObjBtn.disabled=false;
+      els.fileName.textContent='✓ '+file.name; els.fileName.style.display='block';
+      regenerate();
+      toast('Image loaded','success');
+    };
+    img.onerror=()=>toast('Failed to decode image','error');
+    img.src=e.target.result;
+  };
+  reader.onerror=()=>toast('Failed to read file','error');
+  reader.readAsDataURL(file);
+}
+
+/* BACKGROUND REMOVAL */
+function applyBgRemoval(img){
+  const c=document.createElement('canvas'); c.width=img.width; c.height=img.height;
+  const ctx=c.getContext('2d'); ctx.drawImage(img,0,0);
+  const data=ctx.getImageData(0,0,img.width,img.height); const px=data.data;
+  const {r:br,g:bgg,b:bb}=state.bgColor;
+  const tol=parseFloat(els.bgTol.value); const tol2=tol*tol;
+  const soft=els.bgSoft.checked; const softRange=25;
+  for(let i=0;i<px.length;i+=4){
+    const dr=px[i]-br, dg=px[i+1]-bgg, db=px[i+2]-bb;
+    const d2=dr*dr+dg*dg+db*db;
+    if(d2<=tol2) px[i+3]=0;
+    else if(soft){ const d=Math.sqrt(d2); if(d<tol+softRange) px[i+3]=Math.round(255*(d-tol)/softRange); }
+  }
+  ctx.putImageData(data,0,0); return c;
+}
+function autoSampleBg(img){
+  const c=document.createElement('canvas'); c.width=img.width; c.height=img.height;
+  const ctx=c.getContext('2d'); ctx.drawImage(img,0,0);
+  const w=img.width,h=img.height;
+  const samples=[[0,0],[w-1,0],[0,h-1],[w-1,h-1],[w>>1,0],[w>>1,h-1],[0,h>>1],[w-1,h>>1]];
+  let r=0,g=0,b=0;
+  samples.forEach(([x,y])=>{const p=ctx.getImageData(x,y,1,1).data;r+=p[0];g+=p[1];b+=p[2];});
+  return {r:r/samples.length,g:g/samples.length,b:b/samples.length};
+}
+function setBgColor(rgb){
+  state.bgColor=rgb;
+  const hex='#'+[rgb.r,rgb.g,rgb.b].map(v=>Math.round(v).toString(16).padStart(2,'0')).join('').toUpperCase();
+  els.bgSwatch.style.background=hex; els.bgColorLabel.textContent=hex;
+}
+function showOriginalForPick(){
+  const c=els.hmCanvas; c.width=state.image.width; c.height=state.image.height;
+  c.getContext('2d').drawImage(state.image,0,0);
+  els.hmInfo.textContent='click to pick'; c.style.cursor='crosshair';
+}
+function exitPickMode(){state.bgPickMode=false;els.bgPick.style.background='';els.bgPick.style.color='';els.hmCanvas.style.cursor='';}
+
+els.bgEnable.addEventListener('change',()=>{
+  els.bgControls.style.display=els.bgEnable.checked?'block':'none';
+  if(els.bgEnable.checked && state.image) setBgColor(autoSampleBg(state.image));
+  if(state.image) regenerate();
+});
+els.bgTol.addEventListener('input',()=>{els.bgTolVal.textContent=els.bgTol.value;if(state.image && els.bgEnable.checked)regenerate();});
+els.bgSoft.addEventListener('change',()=>{if(state.image && els.bgEnable.checked)regenerate();});
+els.bgAuto.addEventListener('click',()=>{
+  if(!state.image){toast('Load an image first','error');return;}
+  setBgColor(autoSampleBg(state.image));
+  if(!els.bgEnable.checked){els.bgEnable.checked=true;els.bgControls.style.display='block';}
+  regenerate(); toast('Background sampled','success');
+});
+els.bgPick.addEventListener('click',()=>{
+  if(!state.image){toast('Load an image first','error');return;}
+  if(state.bgPickMode){exitPickMode();drawHeightmapPreview();return;}
+  state.bgPickMode=true; els.bgPick.style.background='var(--gold)'; els.bgPick.style.color='var(--black)';
+  showOriginalForPick(); toast('Click image to pick color');
+});
+
+/* HEIGHTMAP */
+function regenerate(){
+  if(!state.image) return;
+  const targetSize=parseInt(els.resIn.value,10);
+  const aspect=state.image.width/state.image.height;
+  let cols,rows;
+  if(aspect>=1){cols=targetSize;rows=Math.max(20,Math.round(targetSize/aspect));}
+  else{rows=targetSize;cols=Math.max(20,Math.round(targetSize*aspect));}
+
+  const sourceCanvas=els.bgEnable.checked?applyBgRemoval(state.image):state.image;
+  const tmp=document.createElement('canvas'); tmp.width=cols; tmp.height=rows;
+  const tctx=tmp.getContext('2d');
+  tctx.imageSmoothingEnabled=true; tctx.imageSmoothingQuality='high';
+  if(els.mirror.checked){tctx.translate(cols,0);tctx.scale(-1,1);}
+  tctx.drawImage(sourceCanvas,0,0,cols,rows);
+  const data=tctx.getImageData(0,0,cols,rows).data;
+
+  const useSilhouette=els.silhouette.checked;
+  let hm=new Float32Array(rows*cols);
+  const alphaMap=new Uint8Array(rows*cols);
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    const idx=(i*cols+j)*4;
+    const r=data[idx],g=data[idx+1],b=data[idx+2],a=data[idx+3];
+    alphaMap[i*cols+j]=a;
+    let lum=(0.299*r+0.587*g+0.114*b)/255;
+    if(!useSilhouette && a<128) lum=0;
+    hm[i*cols+j]=lum;
+  }
+  if(els.invert.checked) for(let i=0;i<hm.length;i++) hm[i]=1-hm[i];
+  const passes=parseInt(els.smoothIn.value,10);
+  for(let p=0;p<passes;p++) hm=boxBlur(hm,rows,cols);
+
+  state.heightmap=hm; state.hmRows=rows; state.hmCols=cols; state.alphaMap=alphaMap;
+
+  if(useSilhouette){
+    const cR=rows-1,cC=cols-1;
+    const mask=new Uint8Array(cR*cC); let masked=0;
+    for(let i=0;i<cR;i++)for(let j=0;j<cC;j++){
+      const a=(alphaMap[i*cols+j]+alphaMap[i*cols+j+1]+alphaMap[(i+1)*cols+j]+alphaMap[(i+1)*cols+j+1])/4;
+      if(a>=128){mask[i*cC+j]=1;masked++;}
+    }
+    state.mask=mask;
+    if(masked===0) toast('Cut to subject: nothing visible','error');
+    else if(masked===cR*cC) toast('Cut to subject needs background removal first','error');
+  } else state.mask=null;
+
+  drawHeightmapPreview(); buildThreePreview(); updateStats();
+}
+
+function boxBlur(src,rows,cols){
+  const dst=new Float32Array(src.length);
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    let s=0,n=0;
+    for(let di=-1;di<=1;di++)for(let dj=-1;dj<=1;dj++){
+      const ni=i+di,nj=j+dj;
+      if(ni<0||ni>=rows||nj<0||nj>=cols) continue;
+      s+=src[ni*cols+nj]; n++;
+    }
+    dst[i*cols+j]=s/n;
+  }
+  return dst;
+}
+
+function drawHeightmapPreview(){
+  const {heightmap:hm,hmRows:rows,hmCols:cols}=state;
+  const canvas=els.hmCanvas; canvas.width=cols; canvas.height=rows; canvas.style.cursor='';
+  const ctx=canvas.getContext('2d'); const img=ctx.createImageData(cols,rows);
+  for(let i=0;i<rows*cols;i++){
+    const v=Math.round(hm[i]*255);
+    img.data[i*4]=v; img.data[i*4+1]=v; img.data[i*4+2]=v; img.data[i*4+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+  els.hmInfo.textContent=`${cols} × ${rows}`;
+}
+
+els.hmCanvas.addEventListener('click',e=>{
+  if(!state.bgPickMode||!state.image) return;
+  const rect=els.hmCanvas.getBoundingClientRect();
+  const x=Math.floor((e.clientX-rect.left)*els.hmCanvas.width/rect.width);
+  const y=Math.floor((e.clientY-rect.top)*els.hmCanvas.height/rect.height);
+  const p=els.hmCanvas.getContext('2d').getImageData(x,y,1,1).data;
+  setBgColor({r:p[0],g:p[1],b:p[2]}); exitPickMode();
+  if(!els.bgEnable.checked){els.bgEnable.checked=true;els.bgControls.style.display='block';}
+  regenerate(); toast('Color picked','success');
+});
+
+/* THREE.JS */
+let three=null;
+function initThree(){
+  const c=els.threeContainer;
+  const w=c.clientWidth||400, h=c.clientHeight||340;
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x000000);
+  const camera=new THREE.PerspectiveCamera(45,w/h,0.1,2000);
+  camera.position.set(80,80,120);
+  const renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(window.devicePixelRatio); renderer.setSize(w,h);
+  c.innerHTML=''; c.appendChild(renderer.domElement);
+  const controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;
+  scene.add(new THREE.AmbientLight(0xffffff,0.35));
+  const dir=new THREE.DirectionalLight(0xfff5dd,0.95); dir.position.set(60,100,60); scene.add(dir);
+  const dir2=new THREE.DirectionalLight(0xC6A54B,0.45); dir2.position.set(-80,40,-40); scene.add(dir2);
+  const grid=new THREE.GridHelper(200,20,0xC6A54B,0x222018);
+  grid.material.opacity=0.18; grid.material.transparent=true;
+  scene.add(grid);
+  three={scene,camera,renderer,controls,mesh:null};
+  function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);}
+  loop();
+  window.addEventListener('resize',()=>{const w=c.clientWidth,h=c.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h);});
+}
+function buildThreePreview(){
+  if(!three) initThree();
+  if(three.mesh){three.scene.remove(three.mesh);three.mesh.geometry.dispose();three.mesh.material.dispose();}
+  const params=readParams();
+  const geometry=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
+  const material=new THREE.MeshStandardMaterial({color:0xC6A54B,roughness:0.45,metalness:0.35,flatShading:false});
+  const mesh=new THREE.Mesh(geometry,material);
+  three.scene.add(mesh); three.mesh=mesh;
+  const box=new THREE.Box3().setFromObject(mesh);
+  const size=box.getSize(new THREE.Vector3()); const center=box.getCenter(new THREE.Vector3());
+  const maxDim=Math.max(size.x,size.y,size.z);
+  three.controls.target.copy(center);
+  three.camera.position.set(center.x+maxDim*1.2,center.y+maxDim*1.0,center.z+maxDim*1.2);
+  three.camera.lookAt(center);
+}
+function readParams(){return{width:parseFloat(els.widthIn.value),base:parseFloat(els.baseIn.value),maxHeight:parseFloat(els.heightIn.value),negative:els.negative.checked};}
+
+/* GEOMETRY */
+function buildGeometry(hm,rows,cols,params){
+  if(state.mask) return buildGeometryWithMask(hm,state.mask,rows,cols,params);
+  const{width,base,maxHeight,negative}=params;
+  const aspect=cols/rows; const depth=width/aspect;
+  const dx=width/(cols-1); const dz=depth/(rows-1);
+  const total=rows*cols*2;
+  const positions=new Float32Array(total*3); let p=0;
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    const x=j*dx-width/2, z=i*dz-depth/2;
+    const h=hm[i*cols+j]*maxHeight;
+    const y=negative?(base+maxHeight-h):(base+h);
+    positions[p++]=x;positions[p++]=y;positions[p++]=z;
+  }
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    const x=j*dx-width/2, z=i*dz-depth/2;
+    positions[p++]=x;positions[p++]=0;positions[p++]=z;
+  }
+  const indices=[];
+  const T=(i,j)=>i*cols+j; const B=(i,j)=>rows*cols+i*cols+j;
+  for(let i=0;i<rows-1;i++)for(let j=0;j<cols-1;j++){
+    const a=T(i,j),b=T(i,j+1),c=T(i+1,j+1),d=T(i+1,j);
+    indices.push(a,c,b,a,d,c);
+  }
+  for(let i=0;i<rows-1;i++)for(let j=0;j<cols-1;j++){
+    const a=B(i,j),b=B(i,j+1),c=B(i+1,j+1),d=B(i+1,j);
+    indices.push(a,b,c,a,c,d);
+  }
+  for(let j=0;j<cols-1;j++){const tl=T(0,j),tr=T(0,j+1),bl=B(0,j),br=B(0,j+1);indices.push(bl,tl,br,tl,tr,br);}
+  for(let j=0;j<cols-1;j++){const tl=T(rows-1,j),tr=T(rows-1,j+1),bl=B(rows-1,j),br=B(rows-1,j+1);indices.push(bl,br,tl,tl,br,tr);}
+  for(let i=0;i<rows-1;i++){const tn=T(i,0),tf=T(i+1,0),bn=B(i,0),bf=B(i+1,0);indices.push(bn,bf,tn,tn,bf,tf);}
+  for(let i=0;i<rows-1;i++){const tn=T(i,cols-1),tf=T(i+1,cols-1),bn=B(i,cols-1),bf=B(i+1,cols-1);indices.push(bn,tn,bf,tn,tf,bf);}
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+  geo.setIndex(indices); geo.computeVertexNormals(); return geo;
+}
+function buildGeometryWithMask(hm,mask,rows,cols,params){
+  const{width,base,maxHeight,negative}=params;
+  const aspect=cols/rows; const depth=width/aspect;
+  const dx=width/(cols-1); const dz=depth/(rows-1);
+  const cR=rows-1,cC=cols-1;
+  const used=new Uint8Array(rows*cols);
+  for(let i=0;i<cR;i++)for(let j=0;j<cC;j++){
+    if(!mask[i*cC+j]) continue;
+    used[i*cols+j]=used[i*cols+j+1]=used[(i+1)*cols+j]=used[(i+1)*cols+j+1]=1;
+  }
+  const tIdx=new Int32Array(rows*cols).fill(-1);
+  const bIdx=new Int32Array(rows*cols).fill(-1);
+  const positions=[];
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    if(!used[i*cols+j]) continue;
+    const x=j*dx-width/2, z=i*dz-depth/2;
+    const h=hm[i*cols+j]*maxHeight;
+    const y=negative?(base+maxHeight-h):(base+h);
+    tIdx[i*cols+j]=positions.length/3; positions.push(x,y,z);
+    bIdx[i*cols+j]=positions.length/3; positions.push(x,0,z);
+  }
+  if(positions.length===0){
+    const e=new THREE.BufferGeometry();
+    e.setAttribute('position',new THREE.BufferAttribute(new Float32Array(0),3));
+    e.setIndex([]); return e;
+  }
+  const indices=[];
+  const isM=(i,j)=>i>=0&&i<cR&&j>=0&&j<cC&&mask[i*cC+j]===1;
+  for(let i=0;i<cR;i++)for(let j=0;j<cC;j++){
+    if(!mask[i*cC+j]) continue;
+    const tA=tIdx[i*cols+j],tB=tIdx[i*cols+j+1],tC=tIdx[(i+1)*cols+j+1],tD=tIdx[(i+1)*cols+j];
+    const bA=bIdx[i*cols+j],bB=bIdx[i*cols+j+1],bC=bIdx[(i+1)*cols+j+1],bD=bIdx[(i+1)*cols+j];
+    indices.push(tA,tC,tB,tA,tD,tC);
+    indices.push(bA,bB,bC,bA,bC,bD);
+    if(!isM(i-1,j)) indices.push(bA,tA,bB,tA,tB,bB);
+    if(!isM(i+1,j)) indices.push(bD,bC,tD,tD,bC,tC);
+    if(!isM(i,j-1)) indices.push(bA,bD,tA,tA,bD,tD);
+    if(!isM(i,j+1)) indices.push(bB,tB,bC,tB,tC,bC);
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(positions),3));
+  geo.setIndex(indices); geo.computeVertexNormals(); return geo;
+}
+
+/* STATS */
+function updateStats(){
+  const params=readParams();
+  const rows=state.hmRows, cols=state.hmCols, cR=rows-1,cC=cols-1;
+  let tris;
+  if(state.mask){
+    let m=0,w=0;
+    for(let i=0;i<cR;i++)for(let j=0;j<cC;j++){
+      if(!state.mask[i*cC+j]) continue;
+      m++;
+      if(i===0||!state.mask[(i-1)*cC+j]) w++;
+      if(i===cR-1||!state.mask[(i+1)*cC+j]) w++;
+      if(j===0||!state.mask[i*cC+j-1]) w++;
+      if(j===cC-1||!state.mask[i*cC+j+1]) w++;
+    }
+    tris=4*m+2*w;
+  } else {
+    tris=4*cR*cC + 2*(2*cC+2*cR);
+  }
+  const stlBytes=84+tris*50;
+  const aspect=cols/rows;
+  const physW=params.width, physD=physW/aspect, physH=params.base+params.maxHeight;
+  els.stats.style.display='grid';
+  els.statSource.textContent=state.imageName+(state.image?` · ${state.image.width}×${state.image.height}`:'');
+  els.statGrid.textContent=`${cols} × ${rows}`+(state.mask?' · silhouette':'');
+  els.statTris.textContent=tris.toLocaleString();
+  els.statSize.textContent=formatBytes(stlBytes);
+  els.statVol.textContent=`${physW.toFixed(0)} × ${physD.toFixed(0)} × ${physH.toFixed(1)} mm`;
+}
+function formatBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+
+/* EXPORTS */
+function exportSTL(geometry){
+  const positions=geometry.attributes.position.array;
+  const indices=geometry.index.array;
+  const triCount=indices.length/3;
+  const buffer=new ArrayBuffer(84+triCount*50);
+  const view=new DataView(buffer);
+  view.setUint32(80,triCount,true);
+  let off=84;
+  for(let i=0;i<triCount;i++){
+    const a=indices[i*3],b=indices[i*3+1],c=indices[i*3+2];
+    const ax=positions[a*3],ay=positions[a*3+1],az=positions[a*3+2];
+    const bx=positions[b*3],by=positions[b*3+1],bz=positions[b*3+2];
+    const cx=positions[c*3],cy=positions[c*3+1],cz=positions[c*3+2];
+    const e1x=bx-ax,e1y=by-ay,e1z=bz-az;
+    const e2x=cx-ax,e2y=cy-ay,e2z=cz-az;
+    let nx=e1y*e2z-e1z*e2y, ny=e1z*e2x-e1x*e2z, nz=e1x*e2y-e1y*e2x;
+    const len=Math.hypot(nx,ny,nz)||1; nx/=len;ny/=len;nz/=len;
+    view.setFloat32(off,nx,true);off+=4; view.setFloat32(off,ny,true);off+=4; view.setFloat32(off,nz,true);off+=4;
+    view.setFloat32(off,ax,true);off+=4; view.setFloat32(off,ay,true);off+=4; view.setFloat32(off,az,true);off+=4;
+    view.setFloat32(off,bx,true);off+=4; view.setFloat32(off,by,true);off+=4; view.setFloat32(off,bz,true);off+=4;
+    view.setFloat32(off,cx,true);off+=4; view.setFloat32(off,cy,true);off+=4; view.setFloat32(off,cz,true);off+=4;
+    off+=2;
+  }
+  return new Blob([buffer],{type:'model/stl'});
+}
+function exportOBJ(geometry){
+  const positions=geometry.attributes.position.array;
+  const indices=geometry.index.array;
+  const lines=['# Mainline Forge OBJ export','# https://designmainline.com/forge','o Heightmap'];
+  const vCount=positions.length/3;
+  for(let i=0;i<vCount;i++) lines.push(`v ${positions[i*3].toFixed(4)} ${positions[i*3+1].toFixed(4)} ${positions[i*3+2].toFixed(4)}`);
+  for(let i=0;i<indices.length;i+=3) lines.push(`f ${indices[i]+1} ${indices[i+1]+1} ${indices[i+2]+1}`);
+  return new Blob([lines.join('\n')],{type:'model/obj'});
+}
+function download(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* PAYWALL FLOW */
+function setUnlocked(unlocked){
+  state.unlocked=unlocked;
+  els.paywall.style.display = unlocked ? 'none' : 'block';
+  els.paywallUnlocked.style.display = unlocked ? 'block' : 'none';
+}
+
+function checkUnlockOnLoad(){
+  // Check for Stripe success redirect markers in the URL
+  const params=new URLSearchParams(window.location.search);
+  const paidFlag = params.get('paid') || params.get('success') || params.get('checkout_session_id') || params.get('session_id');
+  if(paidFlag){
+    sessionStorage.setItem(UNLOCK_KEY, 'stripe-' + Date.now());
+    setUnlocked(true);
+    toast('Payment received — download unlocked','success');
+    // Clean the URL
+    const clean=new URL(window.location.href);
+    ['paid','success','checkout_session_id','session_id'].forEach(k=>clean.searchParams.delete(k));
+    window.history.replaceState({},'',clean.toString());
+    return;
+  }
+  if(localStorage.getItem(UNLOCK_KEY)){
+    setUnlocked(true);
+  }
+}
+
+function setUnlockedPersistent(){
+  localStorage.setItem(UNLOCK_KEY, 'unlocked-' + Date.now());
+  setUnlocked(true);
+}
+
+// Override setUnlocked to also persist when called via redirect path
+const _origSetUnlocked = setUnlocked;
+setUnlocked = function(unlocked){
+  _origSetUnlocked(unlocked);
+  if(unlocked) localStorage.setItem(UNLOCK_KEY, localStorage.getItem(UNLOCK_KEY) || ('unlocked-' + Date.now()));
+};
+
+// "I already paid" escape hatch — in case Stripe doesn't redirect with a flag
+els.haveAccessBtn.addEventListener('click', ()=>{
+  const ok = confirm('Confirm: have you completed payment via Stripe?\n\nClick OK to unlock your download. (Refunds available if there\'s an issue — email jason@designmainline.com)');
+  if(ok){
+    setUnlockedPersistent();
+    toast('Download unlocked','success');
+  }
+});
+
+els.generateBtn.addEventListener('click',()=>{
+  if(!state.heightmap||!state.unlocked) return;
+  const params=readParams();
+  const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
+  const blob=exportSTL(geo);
+  download(blob,(state.imageName||'mainline-forge')+'.stl');
+  toast(`STL exported · ${formatBytes(blob.size)}`,'success');
+  geo.dispose();
+});
+els.downloadObjBtn.addEventListener('click',()=>{
+  if(!state.heightmap||!state.unlocked) return;
+  const params=readParams();
+  const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
+  const blob=exportOBJ(geo);
+  download(blob,(state.imageName||'mainline-forge')+'.obj');
+  toast(`OBJ exported · ${formatBytes(blob.size)}`,'success');
+  geo.dispose();
+});
+
+checkUnlockOnLoad();
+</script>
+</body>
+</html>

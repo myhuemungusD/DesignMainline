@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Image to STL Generator</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --panel-2: #1c1c1c;
+    --line: #2a2a2a;
+    --text: #e8e8e8;
+    --muted: #888;
+    --accent: #FF6B00;
+    --accent-2: #00E676;
+    --danger: #ff4040;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  header h1 {
+    font-size: 18px;
+    margin: 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  header h1 span { color: var(--accent); }
+  header .meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 60px);
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .main {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .drop {
+    border: 2px dashed var(--line);
+    border-radius: 6px;
+    padding: 14px 12px;
+    text-align: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .drop:hover, .drop.dragover {
+    border-color: var(--accent);
+    background: rgba(255,107,0,0.05);
+  }
+  .drop p { margin: 6px 0; font-size: 13px; }
+  .drop .hint { color: var(--muted); font-size: 11px; }
+  .drop input { display: none; }
+
+  .group {
+    margin-bottom: 18px;
+  }
+  .group-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .field {
+    margin-bottom: 12px;
+  }
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .field label span:last-child { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .field input[type=number],
+  .field input[type=text],
+  .field select {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .field input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 8px;
+  }
+  .checkbox input { accent-color: var(--accent); }
+
+  button.primary {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  button.primary:hover:not(:disabled) { opacity: 0.85; }
+  button.primary:disabled {
+    background: var(--line);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  button.secondary {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button.secondary:hover { border-color: var(--accent); }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) {
+    .preview-grid { grid-template-columns: 1fr; }
+  }
+  .preview-box {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .preview-box .title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+  }
+  .preview-box .body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    min-height: 320px;
+    position: relative;
+    background: #000;
+  }
+  #heightmapCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    image-rendering: pixelated;
+  }
+  #threeContainer {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    cursor: grab;
+  }
+  #threeContainer:active { cursor: grabbing; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .stat {
+    font-size: 12px;
+  }
+  .stat .label {
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .stat .value {
+    color: var(--text);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .empty {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+  .toast.success { border-color: var(--accent-2); }
+  .tips {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .tips strong { color: var(--text); }
+  .tips ul { margin: 6px 0; padding-left: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>IMAGE → <span>STL</span> GENERATOR</h1>
+  <div class="meta">JPG/PNG → 3D heightmap → Cura/Blender ready</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg" style="display:none" />
+    <button class="primary" id="uploadBtn" style="margin-bottom:10px">📁 Choose Image File</button>
+    <div class="drop" id="dropZone">
+      <p style="margin:0;font-size:12px;color:var(--muted)">…or drag and drop here</p>
+      <p class="hint" style="margin:4px 0 0">PNG, JPG · ~10MB max</p>
+    </div>
+    <div id="fileName" style="font-size:11px;color:var(--accent);margin:8px 0 16px;word-break:break-all;display:none"></div>
+
+    <div class="group">
+      <div class="group-label">Preset</div>
+      <div class="field">
+        <select id="preset">
+          <option value="relief">Relief (light = tall)</option>
+          <option value="litho">Lithophane (dark = tall)</option>
+          <option value="emboss">Logo emboss</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">Dimensions (mm)</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Width <span id="widthVal">100</span></label>
+          <input type="number" id="widthIn" value="100" min="10" max="500" step="1" />
+        </div>
+        <div class="field">
+          <label>Base <span id="baseVal">1.0</span></label>
+          <input type="number" id="baseIn" value="1.0" min="0.4" max="10" step="0.1" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Max relief height <span id="heightVal">3.0</span> mm</label>
+        <input type="range" id="heightIn" value="3.0" min="0.4" max="20" step="0.1" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">Detail</div>
+      <div class="field">
+        <label>Resolution <span id="resVal">200</span> px/side</label>
+        <input type="range" id="resIn" value="200" min="50" max="400" step="10" />
+      </div>
+      <div class="field">
+        <label>Smoothing <span id="smoothVal">0</span></label>
+        <input type="range" id="smoothIn" value="0" min="0" max="3" step="1" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">Background Removal</div>
+      <label class="checkbox">
+        <input type="checkbox" id="bgEnable" />
+        <span>Remove background</span>
+      </label>
+      <div id="bgControls" style="display:none">
+        <div style="display:flex;gap:8px;align-items:center;margin:8px 0">
+          <div id="bgSwatch" style="width:28px;height:28px;border-radius:4px;border:1px solid var(--line);background:#fff;flex-shrink:0"></div>
+          <span id="bgColorLabel" style="font-size:11px;color:var(--muted);font-family:monospace">#FFFFFF</span>
+        </div>
+        <div class="field-row" style="margin-bottom:10px">
+          <button class="secondary" id="bgAuto" type="button">Auto sample</button>
+          <button class="secondary" id="bgPick" type="button">Pick color</button>
+        </div>
+        <div class="field">
+          <label>Tolerance <span id="bgTolVal">40</span></label>
+          <input type="range" id="bgTol" value="40" min="0" max="180" step="1" />
+        </div>
+        <label class="checkbox">
+          <input type="checkbox" id="bgSoft" checked />
+          <span>Soft edges</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-label">Options</div>
+      <label class="checkbox">
+        <input type="checkbox" id="invert" />
+        <span>Invert (dark = tall)</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="negative" />
+        <span>Negative / deboss</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="mirror" />
+        <span>Mirror horizontally</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="silhouette" />
+        <span>Cut to subject (no square base)</span>
+      </label>
+    </div>
+
+    <button class="primary" id="generateBtn" disabled>Generate &amp; Download STL</button>
+    <div style="height:8px"></div>
+    <button class="secondary" id="downloadObjBtn" style="width:100%" disabled>Also download .OBJ (Blender)</button>
+  </aside>
+
+  <main class="main">
+    <div class="preview-grid">
+      <div class="preview-box">
+        <div class="title">
+          <span>Heightmap preview</span>
+          <span id="hmInfo"></span>
+        </div>
+        <div class="body">
+          <canvas id="heightmapCanvas"></canvas>
+          <div class="empty" id="hmEmpty">Drop an image to start</div>
+        </div>
+      </div>
+      <div class="preview-box">
+        <div class="title">
+          <span>3D preview</span>
+          <span class="empty" id="threeInfo">drag to rotate · scroll to zoom</span>
+        </div>
+        <div class="body">
+          <div id="threeContainer"></div>
+          <div class="empty" id="threeEmpty" style="position:absolute">Awaiting image</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><div class="label">Source</div><div class="value" id="statSource">—</div></div>
+      <div class="stat"><div class="label">Grid</div><div class="value" id="statGrid">—</div></div>
+      <div class="stat"><div class="label">Triangles</div><div class="value" id="statTris">—</div></div>
+      <div class="stat"><div class="label">Est. STL size</div><div class="value" id="statSize">—</div></div>
+      <div class="stat"><div class="label">Print volume</div><div class="value" id="statVol">—</div></div>
+    </div>
+
+    <div class="tips">
+      <strong>Workflow:</strong>
+      <ul>
+        <li><strong>Relief:</strong> portraits, logos with depth — print flat on bed, layer height 0.12–0.16mm.</li>
+        <li><strong>Lithophane:</strong> photos lit from behind — print vertical with brim, white PLA, 0.1mm layers, 100% infill, ~3mm thick.</li>
+        <li><strong>Logo emboss:</strong> small relief (1–2mm) on a thick base — good for nameplates, badges.</li>
+        <li><strong>Cut to subject:</strong> turn on Background Removal first, then enable "Cut to subject" — mesh follows the silhouette, no rectangular base. Best with soft edges OFF for crisp outlines.</li>
+        <li><strong>Blender:</strong> import STL or OBJ → Edit Mode → smooth/decimate as needed → export new STL.</li>
+        <li><strong>Cura:</strong> File → Open → STL → orient flat or vertical → slice → save G-code.</li>
+      </ul>
+      <strong>Resolution tradeoff:</strong> 200 is a good default. 300+ produces big files (10+ MB) and slow Cura slices. 100 is fine for simple logos.
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+'use strict';
+
+const els = {
+  fileInput: document.getElementById('fileInput'),
+  uploadBtn: document.getElementById('uploadBtn'),
+  fileName: document.getElementById('fileName'),
+  dropZone: document.getElementById('dropZone'),
+  preset: document.getElementById('preset'),
+  widthIn: document.getElementById('widthIn'),
+  baseIn: document.getElementById('baseIn'),
+  heightIn: document.getElementById('heightIn'),
+  resIn: document.getElementById('resIn'),
+  smoothIn: document.getElementById('smoothIn'),
+  invert: document.getElementById('invert'),
+  negative: document.getElementById('negative'),
+  mirror: document.getElementById('mirror'),
+  silhouette: document.getElementById('silhouette'),
+  bgEnable: document.getElementById('bgEnable'),
+  bgControls: document.getElementById('bgControls'),
+  bgSwatch: document.getElementById('bgSwatch'),
+  bgColorLabel: document.getElementById('bgColorLabel'),
+  bgAuto: document.getElementById('bgAuto'),
+  bgPick: document.getElementById('bgPick'),
+  bgTol: document.getElementById('bgTol'),
+  bgTolVal: document.getElementById('bgTolVal'),
+  bgSoft: document.getElementById('bgSoft'),
+  generateBtn: document.getElementById('generateBtn'),
+  downloadObjBtn: document.getElementById('downloadObjBtn'),
+  hmCanvas: document.getElementById('heightmapCanvas'),
+  hmEmpty: document.getElementById('hmEmpty'),
+  hmInfo: document.getElementById('hmInfo'),
+  threeContainer: document.getElementById('threeContainer'),
+  threeEmpty: document.getElementById('threeEmpty'),
+  stats: document.getElementById('stats'),
+  statSource: document.getElementById('statSource'),
+  statGrid: document.getElementById('statGrid'),
+  statTris: document.getElementById('statTris'),
+  statSize: document.getElementById('statSize'),
+  statVol: document.getElementById('statVol'),
+  widthVal: document.getElementById('widthVal'),
+  baseVal: document.getElementById('baseVal'),
+  heightVal: document.getElementById('heightVal'),
+  resVal: document.getElementById('resVal'),
+  smoothVal: document.getElementById('smoothVal'),
+  toast: document.getElementById('toast'),
+};
+
+const state = {
+  image: null,
+  imageName: '',
+  heightmap: null,    // Float32Array of normalized 0..1 values
+  hmRows: 0,
+  hmCols: 0,
+  bgColor: { r: 255, g: 255, b: 255 },
+  bgPickMode: false,
+  alphaMap: null,     // Uint8Array of alpha values for each grid vertex
+  mask: null,         // Uint8Array (cellRows*cellCols) for silhouette mode, or null
+};
+
+// ---------- Toast ----------
+let toastTimer;
+function toast(msg, type = '') {
+  els.toast.textContent = msg;
+  els.toast.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2400);
+}
+
+// ---------- Settings sync ----------
+function syncLabels() {
+  els.widthVal.textContent = els.widthIn.value;
+  els.baseVal.textContent = parseFloat(els.baseIn.value).toFixed(1);
+  els.heightVal.textContent = parseFloat(els.heightIn.value).toFixed(1);
+  els.resVal.textContent = els.resIn.value;
+  els.smoothVal.textContent = els.smoothIn.value;
+}
+['input', 'change'].forEach(ev => {
+  [els.widthIn, els.baseIn, els.heightIn, els.resIn, els.smoothIn].forEach(el => {
+    el.addEventListener(ev, () => { syncLabels(); if (state.image) regenerate(); });
+  });
+  [els.invert, els.negative, els.mirror, els.silhouette].forEach(el => {
+    el.addEventListener(ev, () => { if (state.image) regenerate(); });
+  });
+});
+syncLabels();
+
+// Presets
+els.preset.addEventListener('change', () => {
+  const p = els.preset.value;
+  if (p === 'relief') {
+    els.widthIn.value = 100; els.baseIn.value = 1.0;
+    els.heightIn.value = 3.0; els.resIn.value = 200;
+    els.invert.checked = false; els.negative.checked = false;
+  } else if (p === 'litho') {
+    els.widthIn.value = 100; els.baseIn.value = 0.6;
+    els.heightIn.value = 2.4; els.resIn.value = 250;
+    els.invert.checked = true; els.negative.checked = false;
+  } else if (p === 'emboss') {
+    els.widthIn.value = 80; els.baseIn.value = 1.5;
+    els.heightIn.value = 1.2; els.resIn.value = 200;
+    els.invert.checked = false; els.negative.checked = false;
+  }
+  syncLabels();
+  if (state.image) regenerate();
+});
+
+// ---------- File input ----------
+els.uploadBtn.addEventListener('click', () => els.fileInput.click());
+els.fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) loadFile(file);
+});
+['dragenter', 'dragover'].forEach(ev =>
+  els.dropZone.addEventListener(ev, e => { e.preventDefault(); els.dropZone.classList.add('dragover'); })
+);
+['dragleave', 'drop'].forEach(ev =>
+  els.dropZone.addEventListener(ev, e => { e.preventDefault(); els.dropZone.classList.remove('dragover'); })
+);
+els.dropZone.addEventListener('drop', e => {
+  const file = e.dataTransfer.files[0];
+  if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+    loadFile(file);
+  } else {
+    toast('Only PNG or JPG accepted', 'error');
+  }
+});
+
+function loadFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      state.image = img;
+      state.imageName = file.name.replace(/\.[^.]+$/, '');
+      els.hmEmpty.style.display = 'none';
+      els.threeEmpty.style.display = 'none';
+      els.generateBtn.disabled = false;
+      els.downloadObjBtn.disabled = false;
+      els.fileName.textContent = '✓ ' + file.name;
+      els.fileName.style.display = 'block';
+      regenerate();
+      toast('Image loaded: ' + file.name, 'success');
+    };
+    img.onerror = () => toast('Failed to decode image', 'error');
+    img.src = e.target.result;
+  };
+  reader.onerror = () => toast('Failed to read file', 'error');
+  reader.readAsDataURL(file);
+}
+
+// ---------- Background removal ----------
+function applyBgRemoval(img) {
+  const c = document.createElement('canvas');
+  c.width = img.width;
+  c.height = img.height;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const data = ctx.getImageData(0, 0, img.width, img.height);
+  const px = data.data;
+  const { r: br, g: bgg, b: bb } = state.bgColor;
+  const tol = parseFloat(els.bgTol.value);
+  const tol2 = tol * tol;
+  const soft = els.bgSoft.checked;
+  const softRange = 25;
+
+  for (let i = 0; i < px.length; i += 4) {
+    const dr = px[i] - br;
+    const dg = px[i+1] - bgg;
+    const db = px[i+2] - bb;
+    const dist2 = dr*dr + dg*dg + db*db;
+
+    if (dist2 <= tol2) {
+      px[i+3] = 0;
+    } else if (soft) {
+      const dist = Math.sqrt(dist2);
+      if (dist < tol + softRange) {
+        const fade = (dist - tol) / softRange;
+        px[i+3] = Math.round(255 * fade);
+      }
+    }
+  }
+  ctx.putImageData(data, 0, 0);
+  return c;
+}
+
+function autoSampleBg(img) {
+  const c = document.createElement('canvas');
+  c.width = img.width;
+  c.height = img.height;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const w = img.width, h = img.height;
+  const samples = [
+    [0, 0], [w-1, 0], [0, h-1], [w-1, h-1],
+    [Math.floor(w/2), 0], [Math.floor(w/2), h-1],
+    [0, Math.floor(h/2)], [w-1, Math.floor(h/2)],
+  ];
+  let r = 0, g = 0, b = 0;
+  samples.forEach(([x, y]) => {
+    const p = ctx.getImageData(x, y, 1, 1).data;
+    r += p[0]; g += p[1]; b += p[2];
+  });
+  return { r: r/samples.length, g: g/samples.length, b: b/samples.length };
+}
+
+function setBgColor(rgb) {
+  state.bgColor = rgb;
+  const hex = '#' + [rgb.r, rgb.g, rgb.b]
+    .map(v => Math.round(v).toString(16).padStart(2, '0'))
+    .join('').toUpperCase();
+  els.bgSwatch.style.background = hex;
+  els.bgColorLabel.textContent = hex;
+}
+
+function showOriginalForPick() {
+  const c = els.hmCanvas;
+  c.width = state.image.width;
+  c.height = state.image.height;
+  c.getContext('2d').drawImage(state.image, 0, 0);
+  els.hmInfo.textContent = 'click to pick color';
+  c.style.cursor = 'crosshair';
+}
+
+function exitPickMode() {
+  state.bgPickMode = false;
+  els.bgPick.style.background = '';
+  els.bgPick.style.color = '';
+  els.hmCanvas.style.cursor = '';
+}
+
+els.bgEnable.addEventListener('change', () => {
+  els.bgControls.style.display = els.bgEnable.checked ? 'block' : 'none';
+  if (els.bgEnable.checked && state.image) {
+    setBgColor(autoSampleBg(state.image));
+  }
+  if (state.image) regenerate();
+});
+
+els.bgTol.addEventListener('input', () => {
+  els.bgTolVal.textContent = els.bgTol.value;
+  if (state.image && els.bgEnable.checked) regenerate();
+});
+
+els.bgSoft.addEventListener('change', () => {
+  if (state.image && els.bgEnable.checked) regenerate();
+});
+
+els.bgAuto.addEventListener('click', () => {
+  if (!state.image) { toast('Load an image first', 'error'); return; }
+  setBgColor(autoSampleBg(state.image));
+  if (!els.bgEnable.checked) {
+    els.bgEnable.checked = true;
+    els.bgControls.style.display = 'block';
+  }
+  regenerate();
+  toast('Background sampled from edges', 'success');
+});
+
+els.bgPick.addEventListener('click', () => {
+  if (!state.image) { toast('Load an image first', 'error'); return; }
+  if (state.bgPickMode) {
+    exitPickMode();
+    drawHeightmapPreview();
+    return;
+  }
+  state.bgPickMode = true;
+  els.bgPick.style.background = 'var(--accent)';
+  els.bgPick.style.color = '#000';
+  showOriginalForPick();
+  toast('Click on the image to pick background color');
+});
+
+// ---------- Heightmap pipeline ----------
+function regenerate() {
+  if (!state.image) return;
+
+  const targetSize = parseInt(els.resIn.value, 10);
+  const aspect = state.image.width / state.image.height;
+  let cols, rows;
+  if (aspect >= 1) { cols = targetSize; rows = Math.max(20, Math.round(targetSize / aspect)); }
+  else { rows = targetSize; cols = Math.max(20, Math.round(targetSize * aspect)); }
+
+  // Pre-process: apply background removal if enabled
+  const sourceCanvas = els.bgEnable.checked ? applyBgRemoval(state.image) : state.image;
+
+  // Draw image scaled into hidden canvas, read pixels
+  const tmp = document.createElement('canvas');
+  tmp.width = cols;
+  tmp.height = rows;
+  const tctx = tmp.getContext('2d');
+  tctx.imageSmoothingEnabled = true;
+  tctx.imageSmoothingQuality = 'high';
+  if (els.mirror.checked) {
+    tctx.translate(cols, 0);
+    tctx.scale(-1, 1);
+  }
+  tctx.drawImage(sourceCanvas, 0, 0, cols, rows);
+  const data = tctx.getImageData(0, 0, cols, rows).data;
+
+  // Build heightmap (luminance, 0..1) and alpha map
+  const useSilhouette = els.silhouette.checked;
+  let hm = new Float32Array(rows * cols);
+  const alphaMap = new Uint8Array(rows * cols);
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const idx = (i * cols + j) * 4;
+      const r = data[idx], g = data[idx+1], b = data[idx+2], a = data[idx+3];
+      alphaMap[i * cols + j] = a;
+      let lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      // Rectangular mode: transparent pixels flatten to base. Silhouette mode: mask culls them.
+      if (!useSilhouette && a < 128) lum = 0;
+      hm[i * cols + j] = lum;
+    }
+  }
+
+  // Invert
+  if (els.invert.checked) {
+    for (let i = 0; i < hm.length; i++) hm[i] = 1 - hm[i];
+  }
+  // Smoothing (box blur, N passes)
+  const passes = parseInt(els.smoothIn.value, 10);
+  for (let p = 0; p < passes; p++) hm = boxBlur(hm, rows, cols);
+
+  state.heightmap = hm;
+  state.hmRows = rows;
+  state.hmCols = cols;
+  state.alphaMap = alphaMap;
+
+  // Build cell mask for silhouette mode
+  if (useSilhouette) {
+    const cellRows = rows - 1, cellCols = cols - 1;
+    const mask = new Uint8Array(cellRows * cellCols);
+    let masked = 0;
+    for (let i = 0; i < cellRows; i++) {
+      for (let j = 0; j < cellCols; j++) {
+        const a00 = alphaMap[i * cols + j];
+        const a01 = alphaMap[i * cols + j + 1];
+        const a10 = alphaMap[(i + 1) * cols + j];
+        const a11 = alphaMap[(i + 1) * cols + j + 1];
+        if ((a00 + a01 + a10 + a11) / 4 >= 128) {
+          mask[i * cellCols + j] = 1;
+          masked++;
+        }
+      }
+    }
+    state.mask = mask;
+    if (masked === 0) {
+      toast('Cut to subject: nothing visible. Lower tolerance or disable silhouette.', 'error');
+    } else if (masked === cellRows * cellCols) {
+      toast('Cut to subject has no effect — image has no transparency. Enable Background Removal.', 'error');
+    }
+  } else {
+    state.mask = null;
+  }
+
+  drawHeightmapPreview();
+  buildThreePreview();
+  updateStats();
+}
+
+function boxBlur(src, rows, cols) {
+  const dst = new Float32Array(src.length);
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      let sum = 0, n = 0;
+      for (let di = -1; di <= 1; di++) {
+        for (let dj = -1; dj <= 1; dj++) {
+          const ni = i + di, nj = j + dj;
+          if (ni < 0 || ni >= rows || nj < 0 || nj >= cols) continue;
+          sum += src[ni * cols + nj];
+          n++;
+        }
+      }
+      dst[i * cols + j] = sum / n;
+    }
+  }
+  return dst;
+}
+
+function drawHeightmapPreview() {
+  const { heightmap: hm, hmRows: rows, hmCols: cols } = state;
+  const canvas = els.hmCanvas;
+  canvas.width = cols;
+  canvas.height = rows;
+  canvas.style.cursor = '';
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(cols, rows);
+  for (let i = 0; i < rows * cols; i++) {
+    const v = Math.round(hm[i] * 255);
+    img.data[i*4] = v; img.data[i*4+1] = v; img.data[i*4+2] = v; img.data[i*4+3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  els.hmInfo.textContent = `${cols}×${rows}`;
+}
+
+// Click on heightmap canvas to pick bg color when in pick mode
+els.hmCanvas.addEventListener('click', (e) => {
+  if (!state.bgPickMode || !state.image) return;
+  const rect = els.hmCanvas.getBoundingClientRect();
+  const x = Math.floor((e.clientX - rect.left) * els.hmCanvas.width / rect.width);
+  const y = Math.floor((e.clientY - rect.top) * els.hmCanvas.height / rect.height);
+  const ctx = els.hmCanvas.getContext('2d');
+  const p = ctx.getImageData(x, y, 1, 1).data;
+  setBgColor({ r: p[0], g: p[1], b: p[2] });
+  exitPickMode();
+  if (!els.bgEnable.checked) {
+    els.bgEnable.checked = true;
+    els.bgControls.style.display = 'block';
+  }
+  regenerate();
+  toast('Background color picked', 'success');
+});
+
+// ---------- Three.js preview ----------
+let three = null;
+function initThree() {
+  const c = els.threeContainer;
+  const w = c.clientWidth || 400;
+  const h = c.clientHeight || 320;
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 2000);
+  camera.position.set(80, 80, 120);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(w, h);
+  c.innerHTML = '';
+  c.appendChild(renderer.domElement);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const dir = new THREE.DirectionalLight(0xffffff, 0.9);
+  dir.position.set(60, 100, 60);
+  scene.add(dir);
+  const dir2 = new THREE.DirectionalLight(0xff8030, 0.3);
+  dir2.position.set(-80, 40, -40);
+  scene.add(dir2);
+  const grid = new THREE.GridHelper(200, 20, 0x333333, 0x222222);
+  scene.add(grid);
+  three = { scene, camera, renderer, controls, mesh: null };
+  function loop() {
+    requestAnimationFrame(loop);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  loop();
+  window.addEventListener('resize', () => {
+    const w = c.clientWidth, h = c.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+}
+
+function buildThreePreview() {
+  if (!three) initThree();
+  if (three.mesh) {
+    three.scene.remove(three.mesh);
+    three.mesh.geometry.dispose();
+    three.mesh.material.dispose();
+  }
+  const params = readParams();
+  const geometry = buildGeometry(state.heightmap, state.hmRows, state.hmCols, params);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xff6b00,
+    roughness: 0.55,
+    metalness: 0.05,
+    flatShading: false,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  three.scene.add(mesh);
+  three.mesh = mesh;
+  // Auto-frame camera
+  const box = new THREE.Box3().setFromObject(mesh);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  three.controls.target.copy(center);
+  three.camera.position.set(center.x + maxDim * 1.2, center.y + maxDim * 1.0, center.z + maxDim * 1.2);
+  three.camera.lookAt(center);
+}
+
+function readParams() {
+  return {
+    width: parseFloat(els.widthIn.value),
+    base: parseFloat(els.baseIn.value),
+    maxHeight: parseFloat(els.heightIn.value),
+    negative: els.negative.checked,
+  };
+}
+
+// ---------- Geometry builder ----------
+// Builds a closed manifold mesh: top heightmap surface + flat bottom + 4 walls.
+function buildGeometry(hm, rows, cols, params) {
+  if (state.mask) {
+    return buildGeometryWithMask(hm, state.mask, rows, cols, params);
+  }
+  const { width, base, maxHeight, negative } = params;
+  const aspect = cols / rows;
+  const depth = width / aspect;
+  const dx = width / (cols - 1);
+  const dz = depth / (rows - 1);
+
+  const totalTopBottom = rows * cols * 2;
+  const positions = new Float32Array(totalTopBottom * 3);
+  let p = 0;
+
+  // Top vertices: index [0, rows*cols)
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const x = j * dx - width / 2;
+      const z = i * dz - depth / 2;
+      const h = hm[i * cols + j] * maxHeight;
+      const y = negative ? (base + maxHeight - h) : (base + h);
+      positions[p++] = x; positions[p++] = y; positions[p++] = z;
+    }
+  }
+  // Bottom vertices: index [rows*cols, 2*rows*cols)
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const x = j * dx - width / 2;
+      const z = i * dz - depth / 2;
+      positions[p++] = x; positions[p++] = 0; positions[p++] = z;
+    }
+  }
+
+  const indices = [];
+  const topIdx = (i, j) => i * cols + j;
+  const botIdx = (i, j) => rows * cols + i * cols + j;
+
+  // Top surface: normal +y, winding (a, c, b) with a=(i,j), b=(i,j+1), c=(i+1,j+1), d=(i+1,j)
+  for (let i = 0; i < rows - 1; i++) {
+    for (let j = 0; j < cols - 1; j++) {
+      const a = topIdx(i, j), b = topIdx(i, j+1), c = topIdx(i+1, j+1), d = topIdx(i+1, j);
+      indices.push(a, c, b, a, d, c);
+    }
+  }
+  // Bottom surface: normal -y, reverse winding
+  for (let i = 0; i < rows - 1; i++) {
+    for (let j = 0; j < cols - 1; j++) {
+      const a = botIdx(i, j), b = botIdx(i, j+1), c = botIdx(i+1, j+1), d = botIdx(i+1, j);
+      indices.push(a, b, c, a, c, d);
+    }
+  }
+  // Front wall (i=0, z=-depth/2): normal -z
+  for (let j = 0; j < cols - 1; j++) {
+    const tl = topIdx(0, j), tr = topIdx(0, j+1);
+    const bl = botIdx(0, j), br = botIdx(0, j+1);
+    indices.push(bl, tl, br, tl, tr, br);
+  }
+  // Back wall (i=rows-1, z=+depth/2): normal +z
+  for (let j = 0; j < cols - 1; j++) {
+    const tl = topIdx(rows-1, j), tr = topIdx(rows-1, j+1);
+    const bl = botIdx(rows-1, j), br = botIdx(rows-1, j+1);
+    indices.push(bl, br, tl, tl, br, tr);
+  }
+  // Left wall (j=0, x=-width/2): normal -x
+  for (let i = 0; i < rows - 1; i++) {
+    const tn = topIdx(i, 0), tf = topIdx(i+1, 0);
+    const bn = botIdx(i, 0), bf = botIdx(i+1, 0);
+    indices.push(bn, bf, tn, tn, bf, tf);
+  }
+  // Right wall (j=cols-1, x=+width/2): normal +x
+  for (let i = 0; i < rows - 1; i++) {
+    const tn = topIdx(i, cols-1), tf = topIdx(i+1, cols-1);
+    const bn = botIdx(i, cols-1), bf = botIdx(i+1, cols-1);
+    indices.push(bn, tn, bf, tn, tf, bf);
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Silhouette geometry: same idea but only emits geometry where mask[cell] == 1.
+// Walls only generated along edges between a masked cell and an unmasked cell (or boundary).
+function buildGeometryWithMask(hm, mask, rows, cols, params) {
+  const { width, base, maxHeight, negative } = params;
+  const aspect = cols / rows;
+  const depth = width / aspect;
+  const dx = width / (cols - 1);
+  const dz = depth / (rows - 1);
+  const cellRows = rows - 1;
+  const cellCols = cols - 1;
+
+  // Mark vertices touched by any masked cell
+  const used = new Uint8Array(rows * cols);
+  for (let i = 0; i < cellRows; i++) {
+    for (let j = 0; j < cellCols; j++) {
+      if (!mask[i * cellCols + j]) continue;
+      used[i * cols + j] = 1;
+      used[i * cols + j + 1] = 1;
+      used[(i + 1) * cols + j] = 1;
+      used[(i + 1) * cols + j + 1] = 1;
+    }
+  }
+
+  // Assign top + bottom positions for used vertices
+  const topIdx = new Int32Array(rows * cols);
+  const botIdx = new Int32Array(rows * cols);
+  topIdx.fill(-1);
+  botIdx.fill(-1);
+  const positions = [];
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (!used[i * cols + j]) continue;
+      const x = j * dx - width / 2;
+      const z = i * dz - depth / 2;
+      const h = hm[i * cols + j] * maxHeight;
+      const y = negative ? (base + maxHeight - h) : (base + h);
+      topIdx[i * cols + j] = positions.length / 3;
+      positions.push(x, y, z);
+      botIdx[i * cols + j] = positions.length / 3;
+      positions.push(x, 0, z);
+    }
+  }
+
+  if (positions.length === 0) {
+    const empty = new THREE.BufferGeometry();
+    empty.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+    empty.setIndex([]);
+    return empty;
+  }
+
+  const indices = [];
+  const isMasked = (i, j) => {
+    if (i < 0 || i >= cellRows || j < 0 || j >= cellCols) return false;
+    return mask[i * cellCols + j] === 1;
+  };
+
+  for (let i = 0; i < cellRows; i++) {
+    for (let j = 0; j < cellCols; j++) {
+      if (!mask[i * cellCols + j]) continue;
+      const tA = topIdx[i * cols + j];
+      const tB = topIdx[i * cols + j + 1];
+      const tC = topIdx[(i + 1) * cols + j + 1];
+      const tD = topIdx[(i + 1) * cols + j];
+      const bA = botIdx[i * cols + j];
+      const bB = botIdx[i * cols + j + 1];
+      const bC = botIdx[(i + 1) * cols + j + 1];
+      const bD = botIdx[(i + 1) * cols + j];
+      // Top: +y normal
+      indices.push(tA, tC, tB, tA, tD, tC);
+      // Bottom: -y normal
+      indices.push(bA, bB, bC, bA, bC, bD);
+      // Walls only along boundary edges
+      if (!isMasked(i - 1, j)) { // north edge, normal -z
+        indices.push(bA, tA, bB, tA, tB, bB);
+      }
+      if (!isMasked(i + 1, j)) { // south edge, normal +z
+        indices.push(bD, bC, tD, tD, bC, tC);
+      }
+      if (!isMasked(i, j - 1)) { // west edge, normal -x
+        indices.push(bA, bD, tA, tA, bD, tD);
+      }
+      if (!isMasked(i, j + 1)) { // east edge, normal +x
+        indices.push(bB, tB, bC, tB, tC, bC);
+      }
+    }
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// ---------- Stats ----------
+function updateStats() {
+  const params = readParams();
+  const rows = state.hmRows, cols = state.hmCols;
+  const cellRows = rows - 1, cellCols = cols - 1;
+  let tris;
+  if (state.mask) {
+    let masked = 0;
+    let walls = 0;
+    for (let i = 0; i < cellRows; i++) {
+      for (let j = 0; j < cellCols; j++) {
+        if (!state.mask[i * cellCols + j]) continue;
+        masked++;
+        if (i === 0 || !state.mask[(i - 1) * cellCols + j]) walls++;
+        if (i === cellRows - 1 || !state.mask[(i + 1) * cellCols + j]) walls++;
+        if (j === 0 || !state.mask[i * cellCols + j - 1]) walls++;
+        if (j === cellCols - 1 || !state.mask[i * cellCols + j + 1]) walls++;
+      }
+    }
+    tris = 4 * masked + 2 * walls; // top + bottom + boundary walls
+  } else {
+    const top = 2 * cellRows * cellCols;
+    const bot = 2 * cellRows * cellCols;
+    const walls = 2 * (2 * cellCols + 2 * cellRows);
+    tris = top + bot + walls;
+  }
+  const stlBytes = 84 + tris * 50;
+  const aspect = cols / rows;
+  const physWidth = params.width;
+  const physDepth = physWidth / aspect;
+  const physHeight = params.base + params.maxHeight;
+  els.stats.style.display = 'grid';
+  els.statSource.textContent = state.imageName + (state.image ? ` (${state.image.width}×${state.image.height})` : '');
+  els.statGrid.textContent = `${cols} × ${rows}` + (state.mask ? ' (silhouette)' : '');
+  els.statTris.textContent = tris.toLocaleString();
+  els.statSize.textContent = formatBytes(stlBytes);
+  els.statVol.textContent = `${physWidth.toFixed(0)} × ${physDepth.toFixed(0)} × ${physHeight.toFixed(1)} mm`;
+}
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  return (b/1024/1024).toFixed(1) + ' MB';
+}
+
+// ---------- STL export (binary) ----------
+function exportSTL(geometry) {
+  const positions = geometry.attributes.position.array;
+  const indices = geometry.index.array;
+  const triCount = indices.length / 3;
+  const buffer = new ArrayBuffer(84 + triCount * 50);
+  const view = new DataView(buffer);
+  // 80-byte header (zeros) + uint32 triangle count
+  view.setUint32(80, triCount, true);
+  let off = 84;
+  for (let i = 0; i < triCount; i++) {
+    const a = indices[i*3], b = indices[i*3+1], c = indices[i*3+2];
+    const ax = positions[a*3], ay = positions[a*3+1], az = positions[a*3+2];
+    const bx = positions[b*3], by = positions[b*3+1], bz = positions[b*3+2];
+    const cx = positions[c*3], cy = positions[c*3+1], cz = positions[c*3+2];
+    // Face normal
+    const e1x = bx-ax, e1y = by-ay, e1z = bz-az;
+    const e2x = cx-ax, e2y = cy-ay, e2z = cz-az;
+    let nx = e1y*e2z - e1z*e2y;
+    let ny = e1z*e2x - e1x*e2z;
+    let nz = e1x*e2y - e1y*e2x;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    nx /= len; ny /= len; nz /= len;
+    view.setFloat32(off, nx, true); off += 4;
+    view.setFloat32(off, ny, true); off += 4;
+    view.setFloat32(off, nz, true); off += 4;
+    view.setFloat32(off, ax, true); off += 4;
+    view.setFloat32(off, ay, true); off += 4;
+    view.setFloat32(off, az, true); off += 4;
+    view.setFloat32(off, bx, true); off += 4;
+    view.setFloat32(off, by, true); off += 4;
+    view.setFloat32(off, bz, true); off += 4;
+    view.setFloat32(off, cx, true); off += 4;
+    view.setFloat32(off, cy, true); off += 4;
+    view.setFloat32(off, cz, true); off += 4;
+    off += 2; // attribute byte count
+  }
+  return new Blob([buffer], { type: 'model/stl' });
+}
+
+// ---------- OBJ export (text) ----------
+function exportOBJ(geometry) {
+  const positions = geometry.attributes.position.array;
+  const indices = geometry.index.array;
+  const lines = ['# image-to-stl OBJ export', 'o Heightmap'];
+  const vCount = positions.length / 3;
+  for (let i = 0; i < vCount; i++) {
+    lines.push(`v ${positions[i*3].toFixed(4)} ${positions[i*3+1].toFixed(4)} ${positions[i*3+2].toFixed(4)}`);
+  }
+  for (let i = 0; i < indices.length; i += 3) {
+    // OBJ is 1-indexed
+    lines.push(`f ${indices[i]+1} ${indices[i+1]+1} ${indices[i+2]+1}`);
+  }
+  return new Blob([lines.join('\n')], { type: 'model/obj' });
+}
+
+// ---------- Download ----------
+function download(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+els.generateBtn.addEventListener('click', () => {
+  if (!state.heightmap) return;
+  const params = readParams();
+  const geo = buildGeometry(state.heightmap, state.hmRows, state.hmCols, params);
+  const blob = exportSTL(geo);
+  download(blob, (state.imageName || 'model') + '.stl');
+  toast(`STL exported (${formatBytes(blob.size)})`, 'success');
+  geo.dispose();
+});
+
+els.downloadObjBtn.addEventListener('click', () => {
+  if (!state.heightmap) return;
+  const params = readParams();
+  const geo = buildGeometry(state.heightmap, state.hmRows, state.hmCols, params);
+  const blob = exportOBJ(geo);
+  download(blob, (state.imageName || 'model') + '.obj');
+  toast(`OBJ exported (${formatBytes(blob.size)})`, 'success');
+  geo.dispose();
+});
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
-  "buildCommand": "",
-  "installCommand": "",
-  "framework": null,
-  "outputDirectory": "."
+  "rewrites": [
+    { "source": "/forge", "destination": "/tool.html" },
+    { "source": "/tool", "destination": "/tool.html" }
+  ]
 }
