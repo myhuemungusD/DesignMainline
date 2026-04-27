@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mainline Forge — 2D Image to 3D STL · Design Mainline</title>
-<meta name="description" content="Turn any 2D image into a 3D-printable STL. Edit in Blender, slice in Cura, print on your 3D printer. $9 one-time download — no subscription, no watermark.">
+<title>iGrinder — 2D Image to 3D STL · Design Mainline</title>
+<meta name="description" content="iGrinder turns any 2D image into a 3D-printable STL. Forging thoughts into reality — edit in Blender, slice in Cura, print on your 3D printer. $9 one-time download, no subscription, no watermark.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script async src="https://js.stripe.com/v3/buy-button.js"></script>
@@ -158,6 +158,11 @@ footer a{color:var(--gold);text-decoration:none}
 /* PRINT TRIANGLE WATERMARK in 3D viewport */
 .viewport-mark{position:absolute;bottom:.7rem;right:.9rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--gold);opacity:.5;text-transform:uppercase;pointer-events:none;z-index:2}
 
+/* iGRINDER MARK */
+.ig-mark{display:flex;justify-content:center;margin-bottom:1.1rem;position:relative;z-index:2}
+.ig-mark svg{width:88px;height:88px;filter:drop-shadow(0 10px 28px rgba(255,138,61,.22))}
+.ig-tagline{font-family:'Cinzel',serif;font-style:italic;font-weight:400;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:.55rem;position:relative;z-index:2}
+
 /* HERO PIPELINE */
 .hero-pipeline{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.6rem;position:relative;z-index:2}
 .pipe-step{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem .9rem;border:1px solid var(--border-strong);background:rgba(198,165,75,.03)}
@@ -209,15 +214,30 @@ footer a{color:var(--gold);text-decoration:none}
   <a href="/" class="nav-logo">
     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 8L88 73H12L50 8Z" stroke="#C6A54B" stroke-width="2" fill="none"/><path d="M50 22L76 68H24L50 22Z" stroke="#C6A54B" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="50" cy="8" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="12" cy="73" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="88" cy="73" r="2" fill="#C6A54B" opacity="0.6"/></svg>
     <span class="nav-wordmark">Design Mainline</span>
-    <span class="nav-sub">Forge</span>
+    <span class="nav-sub">iGrinder</span>
   </a>
   <a href="/" class="nav-back">← Back to Studio</a>
 </nav>
 
 <section class="tool-hero">
   <div class="hero-glow"></div>
-  <div class="tool-badge"><span class="badge-dot"></span> Mainline Forge · 2D → 3D STL Generator</div>
+  <div class="ig-mark" aria-label="iGrinder">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="igOrange" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FF8A3D"/>
+          <stop offset="100%" stop-color="#E25A0F"/>
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="60" r="56" fill="#0F0F12" stroke="#1F1F22" stroke-width="2"/>
+      <path d="M78 36 A22 22 0 1 0 78 84 L78 64 L60 64 L60 72 L70 72 A14 14 0 1 1 70 48 L86 48 Z" fill="url(#igOrange)" stroke="#C24D08" stroke-width="0.5"/>
+      <circle cx="42" cy="38" r="4.5" fill="#F2ECE0"/>
+      <rect x="37.5" y="48" width="9" height="36" fill="#F2ECE0"/>
+    </svg>
+  </div>
+  <div class="tool-badge"><span class="badge-dot"></span> iGrinder · 2D → 3D STL Generator</div>
   <h1 class="tool-title">Turn Any <span class="gold">Image</span> Into a 3D-Printable <span class="gold">STL</span></h1>
+  <div class="ig-tagline">Forging thoughts into reality</div>
   <p class="tool-sub">Built by a maker, for makers. Drop a photo, logo, or sketch — get a clean STL ready to refine in Blender, slice in Cura, and print on your home 3D printer. Live preview is free. $9 unlocks the file.</p>
   <div class="hero-pipeline">
     <span class="pipe-step"><span class="pipe-num">01</span><span class="pipe-label">Image</span></span>
@@ -360,7 +380,7 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="body">
           <div id="threeContainer"></div>
           <div class="empty" id="threeEmpty" style="position:absolute">Awaiting source</div>
-          <div class="viewport-mark">Mainline Forge</div>
+          <div class="viewport-mark">iGrinder</div>
         </div>
       </div>
     </div>
@@ -378,7 +398,7 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="s-label" style="margin-bottom:1rem">Why I Built This</div>
       <p class="why-lead">I 3D-print a lot. The bottleneck was always the same — turning a flat image into a usable mesh.</p>
       <p>Existing tools were either expensive subscription SaaS, broken open-source experiments, or marketplaces that wanted a cut of every download. I wanted something <strong>fast, no-account, no-subscription</strong> — drop an image, see it in 3D, pay once, get the file. So I built it.</p>
-      <p>Mainline Forge gives you a clean heightmap mesh with proper walls and a flat base — manifold, watertight, ready for the next step. <strong>Edit it in Blender</strong> (decimate, smooth, boolean cut, add text), then <strong>slice in Cura</strong> and print. That's the loop.</p>
+      <p>iGrinder gives you a clean heightmap mesh with proper walls and a flat base — manifold, watertight, ready for the next step. <strong>Edit it in Blender</strong> (decimate, smooth, boolean cut, add text), then <strong>slice in Cura</strong> and print. That's the loop.</p>
       <p class="why-sig">— Jason Hamilton · Design Mainline</p>
     </div>
 
@@ -451,7 +471,7 @@ footer a{color:var(--gold);text-decoration:none}
 </div>
 
 <footer>
-  &copy; 2026 <a href="/">Design Mainline LLC</a> · Mainline Forge · Single-purchase license · Files yours to print, sell, or modify.
+  &copy; 2026 <a href="/">Design Mainline LLC</a> · iGrinder · Single-purchase license · Files yours to print, sell, or modify.
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -922,7 +942,7 @@ function exportSTL(geometry){
 function exportOBJ(geometry){
   const positions=geometry.attributes.position.array;
   const indices=geometry.index.array;
-  const lines=['# Mainline Forge OBJ export','# https://designmainline.com/forge','o Heightmap'];
+  const lines=['# iGrinder OBJ export','# https://designmainline.com/forge','o Heightmap'];
   const vCount=positions.length/3;
   for(let i=0;i<vCount;i++) lines.push(`v ${positions[i*3].toFixed(4)} ${positions[i*3+1].toFixed(4)} ${positions[i*3+2].toFixed(4)}`);
   for(let i=0;i<indices.length;i+=3) lines.push(`f ${indices[i]+1} ${indices[i+1]+1} ${indices[i+2]+1}`);
@@ -987,7 +1007,7 @@ els.generateBtn.addEventListener('click',()=>{
   const params=readParams();
   const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
   const blob=exportSTL(geo);
-  download(blob,(state.imageName||'mainline-forge')+'.stl');
+  download(blob,(state.imageName||'igrinder')+'.stl');
   toast(`STL exported · ${formatBytes(blob.size)}`,'success');
   geo.dispose();
 });
@@ -996,7 +1016,7 @@ els.downloadObjBtn.addEventListener('click',()=>{
   const params=readParams();
   const geo=buildGeometry(state.heightmap,state.hmRows,state.hmCols,params);
   const blob=exportOBJ(geo);
-  download(blob,(state.imageName||'mainline-forge')+'.obj');
+  download(blob,(state.imageName||'igrinder')+'.obj');
   toast(`OBJ exported · ${formatBytes(blob.size)}`,'success');
   geo.dispose();
 });
