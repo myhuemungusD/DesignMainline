@@ -35,6 +35,8 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;transition:color .3s}
 .nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-links a.nav-igrinder{color:var(--gold);position:relative;padding-right:.7rem}
+.nav-links a.nav-igrinder::after{content:'';position:absolute;top:50%;right:-.05rem;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px rgba(198,165,75,.7);animation:pulse 2.2s ease-in-out infinite}
 .nav-btn{display:inline-flex;align-items:center;padding:.6rem 1.5rem;border:1px solid var(--gold);color:var(--gold);background:0 0;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s}
 .nav-btn:hover{background:var(--gold);color:var(--black)}
 .hamburger{display:none;flex-direction:column;gap:6px;cursor:pointer;background:0 0;border:none;padding:4px;z-index:1001}
@@ -60,6 +62,56 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .section-label::before{content:'';width:30px;height:1px;background:var(--gold)}
 .section-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:1rem}
 .section-subtitle{color:var(--muted);font-size:1rem;max-width:520px;line-height:1.8}
+
+/* FORGE SPOTLIGHT (top) */
+.forge-spotlight{position:relative;padding:9rem 2rem 5rem;overflow:hidden;border-bottom:1px solid var(--border)}
+.forge-spotlight::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.09) 0%,rgba(198,165,75,.03) 35%,transparent 70%);top:-30%;left:-15%;pointer-events:none;z-index:0}
+.forge-spotlight::after{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.06) 0%,transparent 65%);bottom:-40%;right:-10%;pointer-events:none;z-index:0}
+.forge-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;align-items:center;position:relative;z-index:2;max-width:1200px;margin:0 auto}
+.forge-content{opacity:0;animation:fadeUp .9s ease .25s forwards}
+.forge-eyebrow{display:inline-flex;align-items:center;gap:.7rem;padding:.45rem 1.2rem;border:1px solid var(--gold);border-radius:100px;font-size:.65rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem;background:rgba(198,165,75,.04)}
+.forge-eyebrow .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:pulse 2.2s ease-in-out infinite}
+.forge-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(2.2rem,5.2vw,4.2rem);line-height:1.05;letter-spacing:.02em;margin-bottom:1.4rem;opacity:1;animation:none}
+.forge-title .gold{color:var(--gold)}
+.forge-desc{font-size:1.05rem;color:var(--muted);max-width:560px;line-height:1.75;margin-bottom:2rem}
+.forge-desc strong{color:var(--white);font-weight:400}
+.forge-pricing{display:flex;align-items:center;gap:1rem;margin-bottom:2.2rem;flex-wrap:wrap;padding:1rem 1.25rem;border:1px solid var(--border-strong);background:rgba(198,165,75,.03);max-width:560px}
+.forge-price-amt{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:600;color:var(--gold);line-height:1}
+.forge-price-label{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-light);margin-left:.4rem}
+.forge-price-sep{color:var(--border-strong);font-size:1.4rem;line-height:1}
+.forge-price-note{color:var(--muted);font-size:.78rem;line-height:1.5;flex:1;min-width:180px}
+.forge-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.2rem}
+.forge-actions .btn-primary{padding:1rem 2.6rem;font-size:.82rem;box-shadow:0 0 0 1px rgba(198,165,75,.3),0 18px 40px -12px rgba(198,165,75,.35)}
+.forge-trust{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.forge-trust span{display:inline-flex;align-items:center;gap:.5rem}
+.forge-trust span::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.6}
+.forge-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:440px;opacity:0;animation:fadeUp .9s ease .45s forwards}
+.forge-stage{position:relative;width:100%;max-width:460px;aspect-ratio:1/1;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:center}
+.forge-tile{position:relative;aspect-ratio:1/1;background:var(--card);border:1px solid var(--border-strong);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;overflow:hidden}
+.forge-tile-label{position:absolute;top:.7rem;left:.85rem;font-size:.55rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.forge-tile-badge{position:absolute;top:.7rem;right:.85rem;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.forge-tile.input{background:linear-gradient(135deg,#0E0E0E 0%,#141008 100%)}
+.forge-tile.output{background:linear-gradient(135deg,#161108 0%,#1F1606 100%);box-shadow:inset 0 0 80px rgba(198,165,75,.06)}
+.forge-tile svg{width:75%;height:75%;display:block}
+.forge-arrow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:var(--black);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Cinzel',serif;font-size:1.1rem;z-index:5;box-shadow:0 0 0 6px var(--black),0 0 30px rgba(198,165,75,.4);animation:float 5s ease-in-out infinite}
+.forge-meta{position:absolute;bottom:-2.4rem;left:0;right:0;display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.forge-meta b{color:var(--gold);font-weight:500}
+.forge-out-3d{position:relative;width:75%;height:75%}
+.forge-out-3d svg{position:absolute;inset:0;width:100%;height:100%;animation:float 6s ease-in-out infinite}
+.forge-out-3d svg:nth-child(1){opacity:.25;transform:translate(8px,8px)}
+.forge-out-3d svg:nth-child(2){opacity:.55;transform:translate(4px,4px)}
+.forge-out-3d svg:nth-child(3){opacity:1}
+@media(max-width:980px){
+  .forge-spotlight{padding:7rem 1.5rem 4rem}
+  .forge-grid{grid-template-columns:1fr;gap:3rem;text-align:center}
+  .forge-eyebrow{margin-left:auto;margin-right:auto}
+  .forge-desc{margin-left:auto;margin-right:auto}
+  .forge-pricing{margin-left:auto;margin-right:auto;justify-content:center;text-align:left}
+  .forge-actions{justify-content:center}
+  .forge-trust{justify-content:center}
+  .forge-visual{order:-1;min-height:340px}
+  .forge-stage{max-width:360px}
+}
 
 /* HERO */
 .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 6rem}
@@ -212,6 +264,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <span class="nav-wordmark">Design Mainline</span>
   </a>
   <ul class="nav-links">
+    <li><a href="/forge" class="nav-igrinder">iGrinder</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#skatehubba">SkateHubba</a></li>
     <li><a href="#process">Process</a></li>
@@ -221,8 +274,52 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#services">Services</a><a href="#skatehubba">SkateHubba</a><a href="#process">Process</a><a href="#about">About</a><a href="#contact">Contact</a>
+  <a href="/forge">iGrinder</a><a href="#services">Services</a><a href="#skatehubba">SkateHubba</a><a href="#process">Process</a><a href="#about">About</a><a href="#contact">Contact</a>
 </div>
+
+<section class="forge-spotlight" id="forge">
+  <div class="forge-grid">
+    <div class="forge-content">
+      <div class="forge-eyebrow"><span class="badge-dot"></span> Flagship Tool · Live Now</div>
+      <h1 class="forge-title">Forge thoughts <br>into <span class="gold">reality</span>.</h1>
+      <p class="forge-desc"><strong>iGrinder</strong> turns any photo, logo, or sketch into a 3D-printable STL file — right in your browser. Free live preview. One file. Yours forever.</p>
+      <div class="forge-pricing">
+        <span><span class="forge-price-amt">$9</span><span class="forge-price-label">one-time</span></span>
+        <span class="forge-price-sep">|</span>
+        <span class="forge-price-note">No subscription. No watermark. Commercial license included.</span>
+      </div>
+      <div class="forge-actions">
+        <a href="/forge" class="btn-primary">Try iGrinder — Free Preview</a>
+        <a href="#services" class="btn-ghost">Explore the Studio</a>
+      </div>
+      <div class="forge-trust">
+        <span>Browser-based · no install</span>
+        <span>STL ready in under 30s</span>
+        <span>Runs on your device</span>
+      </div>
+    </div>
+    <div class="forge-visual" aria-hidden="true">
+      <div class="forge-stage">
+        <div class="forge-tile input">
+          <span class="forge-tile-label">Input · 2D</span>
+          <span class="forge-tile-badge">PNG / JPG / SVG</span>
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="2" fill="none"/><circle cx="50" cy="12" r="2.4" fill="#C6A54B"/><circle cx="12" cy="78" r="2.4" fill="#C6A54B"/><circle cx="88" cy="78" r="2.4" fill="#C6A54B"/></svg>
+        </div>
+        <div class="forge-tile output">
+          <span class="forge-tile-label">Output · 3D</span>
+          <span class="forge-tile-badge">.STL</span>
+          <div class="forge-out-3d">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.4" fill="none"/></svg>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.6" fill="none"/></svg>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.8" fill="none"/><line x1="50" y1="12" x2="58" y2="4" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="88" y1="78" x2="96" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="12" y1="78" x2="20" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/></svg>
+          </div>
+        </div>
+        <div class="forge-arrow">→</div>
+        <div class="forge-meta"><span>2D Image</span><span><b>Extruded</b> · STL</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="hero" id="hero">
   <div class="hero-glow"></div><div class="hero-accent-line"></div><div class="hero-accent-line"></div>
