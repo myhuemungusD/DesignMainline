@@ -5,6 +5,7 @@
   "outputDirectory": null,
   "rewrites": [
     { "source": "/forge", "destination": "/tool.html" },
-    { "source": "/tool", "destination": "/tool.html" }
+    { "source": "/tool", "destination": "/tool.html" },
+    { "source": "/studio", "destination": "/studio.html" }
   ]
 }
