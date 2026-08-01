@@ -722,9 +722,9 @@ render();
 /* Drop real photos at these paths and they replace the placeholders automatically.
    Recommended: 1200x1200 square, WebP, under 200KB each. */
 const SHOTS=[
-  {src:'/assets/sleeves/01.webp',cap:'"DIEGO" · Matte Black / Gold'},
-  {src:'/assets/sleeves/02.webp',cap:'"NOCTURNE" · Oxblood / Bone'},
-  {src:'/assets/sleeves/03.webp',cap:'"KAI" · Cobalt / Steel'},
+  {src:'/assets/sleeves/01.webp',cap:'Fan Tribute · Engraved Wordmark'},
+  {src:'/assets/sleeves/02.webp',cap:'Skate Culture Tribute · Neon Green'},
+  {src:'/assets/sleeves/03.webp',cap:'"SkateHubba" · Custom Artwork, Orange'},
   {src:'/assets/sleeves/04.webp',cap:'"MAINLINE" · Gold / Black'},
   {src:'/assets/sleeves/05.webp',cap:'"RUBY" · Blood Orange / Bone'},
   {src:'/assets/sleeves/06.webp',cap:'"304" · Gunmetal / Copper'}
@@ -746,9 +746,9 @@ SHOTS.forEach((shot,i)=>{
   const img=b.querySelector('img');
   img.addEventListener('load',()=>{b.classList.remove('empty')});
   img.addEventListener('error',()=>{b.classList.add('empty')});
-  img.src=shot.src;
   b.addEventListener('click',()=>{if(!b.classList.contains('empty'))openLightbox(shot.src,shot.cap)});
   grid.appendChild(b);
+  img.src=shot.src;
 });
 
 /* ================= LIGHTBOX ================= */

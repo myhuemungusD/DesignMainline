@@ -283,6 +283,7 @@ document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 document.querySelectorAll('.slide-media img').forEach(img=>{
   img.addEventListener('load',()=>img.classList.add('loaded'));
   img.addEventListener('error',()=>img.remove());
+  if(img.complete&&img.naturalWidth>0)img.classList.add('loaded');
 });
 
 /* ================= SLIDESHOW ================= */
