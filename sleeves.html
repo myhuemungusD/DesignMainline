@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mainline Sleeves — Custom 3D-Printed Device Sleeves · Your Name, Your Colors</title>
-<meta name="description" content="Custom 3D-printed device sleeves, made to order. Put any name, word, or handle on it. Pick your color and finish, see it live before you order. Printed one at a time in Southern California.">
+<title>Mainline Sleeves — Made to Fit, Designed to Function · Mainline Originals</title>
+<meta name="description" content="Mainline Sleeves: a flexible, custom 3D-printed protective sleeve built to help keep the battery attached and protect your device when dropped. Personalize with a name, logo, or artwork and see it live before you order.">
 <meta property="og:type" content="product">
-<meta property="og:title" content="Mainline Sleeves — Custom 3D-Printed Device Sleeves">
-<meta property="og:description" content="Your name on it. Your color. Printed one at a time. Design it live, then order.">
+<meta property="og:title" content="Mainline Sleeves — Made to Fit, Designed to Function">
+<meta property="og:description" content="A flexible protective sleeve that helps keep the battery attached and protects your device when dropped. Personalize it, then order.">
 <meta property="og:site_name" content="Design Mainline">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -151,6 +151,28 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .lightbox-close:hover{background:var(--gold);color:var(--black)}
 .lightbox-cap{position:absolute;bottom:1.8rem;left:0;right:0;text-align:center;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 
+/* PROTECTION */
+.protect{padding:calc(var(--section-pad) * .6) 0;border-bottom:1px solid var(--border)}
+.protect-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.protect-card{border:1px solid var(--border-strong);background:var(--card);padding:2.2rem 2rem;transition:border-color .4s}
+.protect-card:hover{border-color:var(--gold)}
+.protect-icon{width:56px;height:56px;border:1px solid var(--border-strong);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:1.2rem}
+.protect-card h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.1rem;margin-bottom:.8rem;line-height:1.35}
+.protect-card p{color:var(--muted);font-size:.86rem;line-height:1.75}
+
+/* MAKE IT YOURS */
+.customize{padding:var(--section-pad) 0;background:linear-gradient(180deg,transparent 0%,rgba(198,165,75,.015) 50%,transparent 100%)}
+.customize-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:3.5rem;align-items:start}
+.customize-list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.7rem 1.5rem;margin:1.8rem 0 2rem}
+.customize-list li{color:var(--white);font-size:.9rem;font-weight:300;display:flex;align-items:center;gap:.7rem}
+.customize-list li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(198,165,75,.12);flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5L4 7L8 3' stroke='%23C6A54B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+.customize-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.customize-note{border:1px solid var(--border);background:var(--card);padding:1.9rem 1.7rem}
+.customize-note h4{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;margin-bottom:1rem}
+.customize-note p{color:var(--muted);font-size:.84rem;line-height:1.75;margin-bottom:.9rem}
+.customize-note p:last-child{margin-bottom:0}
+.customize-note a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)}
+
 /* SPECS */
 .specs{padding:var(--section-pad) 0;background:linear-gradient(180deg,transparent 0%,rgba(198,165,75,.015) 50%,transparent 100%)}
 .specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;margin-top:3.5rem;align-items:start}
@@ -222,7 +244,8 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 .footer-links a:hover{color:var(--gold)}
 
 /* RESPONSIVE */
-@media(max-width:1024px){.how-steps{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(2,1fr)}.specs-grid{grid-template-columns:1fr;gap:2.5rem}}
+@media(max-width:1024px){.how-steps{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(2,1fr)}.specs-grid{grid-template-columns:1fr;gap:2.5rem}.protect-grid{grid-template-columns:1fr;gap:2rem}.customize-grid{grid-template-columns:1fr;gap:2.5rem}}
+@media(max-width:480px){.customize-list{grid-template-columns:1fr}}
 @media(max-width:980px){
   .studio{padding:7rem 1.5rem 4rem}
   .studio-grid{grid-template-columns:1fr;gap:3rem}
@@ -251,25 +274,26 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <span class="nav-wordmark">Mainline Sleeves</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#gallery">Gallery</a></li>
-    <li><a href="#specs">Specs</a></li>
-    <li><a href="#how">How It Works</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#top" class="nav-btn">Design Yours</a></li>
+    <li><a href="/studio">Work</a></li>
+    <li><a href="#top">Originals</a></li>
+    <li><a href="/igrinder">iGrinder</a></li>
+    <li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li>
+    <li><a href="/studio#about">About</a></li>
+    <li><a href="/studio#contact" class="nav-btn">Contact</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#gallery">Gallery</a><a href="#specs">Specs</a><a href="#how">How It Works</a><a href="#faq">FAQ</a><a href="#top">Design Yours</a>
+  <a href="/studio">Work</a><a href="#top">Originals</a><a href="/igrinder">iGrinder</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
 </div>
 
 <!-- ============ HERO / LIVE CONFIGURATOR ============ -->
 <section class="studio" id="top">
   <div class="studio-grid">
     <div class="studio-content">
-      <div class="hero-eyebrow"><span class="badge-dot"></span>Made To Order</div>
-      <h1 class="hero-title">Put your name<br>on it. <span class="gold">Literally.</span></h1>
-      <p class="hero-desc">Custom 3D-printed sleeves, printed one at a time. Type whatever you want — your name, your crew, an inside joke — pick a color, and <strong>watch it render live</strong> before you order a thing.</p>
+      <div class="hero-eyebrow"><span class="badge-dot"></span>Mainline Originals</div>
+      <h1 class="hero-title">Made to Fit.<br>Designed to <span class="gold">Function.</span></h1>
+      <p class="hero-desc">A flexible protective sleeve built to help keep the battery attached and protect your device when dropped. Design yours below — <strong>custom name, logo, or artwork</strong>, rendered live before you order.</p>
 
       <div class="cfg">
         <div class="cfg-row">
@@ -371,6 +395,26 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   </div>
 </section>
 
+<!-- ============ PROTECTION ============ -->
+<section class="protect" id="protect">
+  <div class="container">
+    <div class="protect-grid">
+      <div class="reveal">
+        <div class="section-label">Why It's Built This Way</div>
+        <h2 class="section-title">Protection That <span class="gold">Stays Together</span>.</h2>
+        <p class="section-subtitle">The flexible outer sleeve holds the separate sections of your device together, helping prevent the battery from disconnecting and hitting the ground during a drop — while protecting the whole thing from everyday scuffs.</p>
+      </div>
+      <div class="protect-card reveal reveal-delay-1">
+        <div class="protect-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 2l7 3v6c0 4.6-3 8.6-7 10-4-1.4-7-5.4-7-10V5l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h3>Built around the drop, not just the shelf</h3>
+        <p>Most sleeves are cosmetic. This one is structural — a snug, flexible fit that keeps the pieces of your device acting as one unit instead of coming apart on impact, and still leaves full access to the controls, display, airflow, and charging port.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ GALLERY ============ -->
 <section class="gallery" id="gallery">
   <div class="container">
@@ -389,6 +433,36 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <img id="lightbox-img" src="" alt="">
   <div class="lightbox-cap" id="lightbox-cap"></div>
 </div>
+
+<!-- ============ MAKE IT YOURS ============ -->
+<section class="customize" id="customize">
+  <div class="container">
+    <div class="customize-grid">
+      <div class="reveal">
+        <div class="section-label">Personalize It</div>
+        <h2 class="section-title">Make It <span class="gold">Yours</span>.</h2>
+        <p class="section-subtitle">Choose from available designs, or customize your sleeve with:</p>
+        <ul class="customize-list">
+          <li>Your name</li>
+          <li>Shop logo</li>
+          <li>Original artwork</li>
+          <li>Raised graphics</li>
+          <li>Custom colors</li>
+          <li>Shop-exclusive designs</li>
+        </ul>
+        <div class="customize-actions">
+          <a href="#gallery" class="btn-primary">View Available Designs</a>
+          <a href="mailto:jason@designmainline.com?subject=Custom%20Sleeve%20Request" class="btn-ghost">Request a Custom Design</a>
+        </div>
+      </div>
+      <div class="customize-note reveal reveal-delay-1">
+        <h4>For shops & teams</h4>
+        <p>Retail partners can stock ready-made designs or run an exclusive batch featuring their own shop logo and colors — something customers can't get in the original box.</p>
+        <p>Email <a href="mailto:jason@designmainline.com">jason@designmainline.com</a> with what you're picturing. We respond within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ SPECS ============ -->
 <section class="specs" id="specs">
@@ -494,13 +568,13 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <div class="studio-mini-label">Who Makes These</div>
     <h3>Built by <span class="gold">Design Mainline</span></h3>
     <p>Mainline Sleeves is made by <strong>Design Mainline LLC</strong> — a technology studio in Southern California doing smart environment design, custom software, and physical products. Same hands, same standard.</p>
-    <div class="studio-mini-other">Also from the studio: <a href="/forge">iGrinder — image to 3D STL</a> · <a href="/studio">The Studio</a></div>
+    <div class="studio-mini-other">Also from the studio: <a href="/igrinder">iGrinder — image to 3D STL</a> · <a href="/studio">The Studio</a></div>
   </div>
 </section>
 
 <footer>
   <div class="container"><div class="footer-inner">
-    <div class="footer-copy">&copy; 2026 <a href="/studio">Design Mainline LLC</a>. Mainline Sleeves is a product by Design Mainline.<br><span style="font-size:.65rem">Printed to order in Southern California · Ships with tracking</span></div>
+    <div class="footer-copy">&copy; 2026 <a href="/">Design Mainline LLC</a>. Mainline Sleeves is a product by Mainline Originals.<br><span style="font-size:.65rem">Printed to order in Southern California · Ships with tracking</span></div>
     <ul class="footer-links"><li><a href="#gallery">Gallery</a></li><li><a href="#specs">Specs</a></li><li><a href="#faq">FAQ</a></li><li><a href="/studio">Studio</a></li><li><a href="#top" style="color:var(--gold)">Design Yours</a></li></ul>
   </div></div>
 </footer>

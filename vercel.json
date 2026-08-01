@@ -7,6 +7,8 @@
     { "source": "/forge", "destination": "/tool.html" },
     { "source": "/tool", "destination": "/tool.html" },
     { "source": "/studio", "destination": "/studio.html" },
-    { "source": "/sleeves", "destination": "/sleeves.html" }
+    { "source": "/sleeves", "destination": "/sleeves.html" },
+    { "source": "/originals", "destination": "/sleeves.html" },
+    { "source": "/igrinder", "destination": "/igrinder.html" }
   ]
 }
