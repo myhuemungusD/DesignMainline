@@ -134,7 +134,7 @@ h1 .subtitle{display:block;font-family:'Outfit',sans-serif;font-weight:300;font-
 
 /* SERVICES */
 .services{position:relative;padding:var(--section-pad) 0}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem}
+.services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:4rem}
 .service-card{position:relative;padding:2.5rem 2rem;background:var(--card);border:1px solid var(--border);transition:all .5s cubic-bezier(.16,1,.3,1);overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;display:block}
 .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:0;transition:opacity .5s}
 .service-card:hover{border-color:var(--border-strong);transform:translateY(-4px);background:var(--card-hover)}
@@ -345,16 +345,17 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <span class="nav-wordmark">Design Mainline</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#services">Services</a></li>
+    <li><a href="#services">Work</a></li>
+    <li><a href="/originals">Originals</a></li>
+    <li><a href="/igrinder">iGrinder</a></li>
     <li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li>
-    <li><a href="/forge">iGrinder</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="#contact" class="nav-btn">Get in Touch</a></li>
+    <li><a href="#contact" class="nav-btn">Contact</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#services">Services</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/forge">iGrinder</a><a href="#about">About</a><a href="#contact">Contact</a>
+  <a href="#services">Work</a><a href="/originals">Originals</a><a href="/igrinder">iGrinder</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="#about">About</a><a href="#contact">Contact</a>
 </div>
 
 <section class="hero" id="hero">
@@ -372,7 +373,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="services" id="services">
   <div class="container">
-    <div class="reveal"><div class="section-label">What We Build</div><div class="section-title">Three Pillars of <span class="gold">Design Mainline</span></div><div class="section-subtitle">Engineering luxury into every layer — from the spaces you live in to the software you interact with.</div></div>
+    <div class="reveal"><div class="section-label">What We Build</div><div class="section-title">Four Pillars of <span class="gold">Design Mainline</span></div><div class="section-subtitle">Engineering luxury into every layer — from the spaces you live in, to the software you interact with, to the objects you carry.</div></div>
     <div class="services-grid">
       <a href="#smart-environments" class="service-card reveal reveal-delay-1">
         <div class="service-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
@@ -394,6 +395,13 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
         <p>We build our own products. Our flagship, SkateHubba™, is a location-based social platform redefining how skateboarders compete and connect globally.</p>
         <div class="service-tags"><span class="service-tag">SkateHubba™</span><span class="service-tag">UI/UX</span><span class="service-tag">Product</span></div>
         <div class="service-link">Visit SkateHubba <span>↗</span></div>
+      </a>
+      <a href="/originals" class="service-card reveal reveal-delay-4">
+        <div class="service-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9z"/><path d="M12 20v-9"/><path d="M20 6.5L12 11 4 6.5"/></svg></div>
+        <h3>Additive Manufacturing</h3>
+        <p>Mainline Originals — custom 3D-printed goods, made to order. Mainline Sleeves puts your name, a logo, or original artwork into the part itself. Design it live on screen, we print it that day.</p>
+        <div class="service-tags"><span class="service-tag">Mainline Originals</span><span class="service-tag">3D Print</span><span class="service-tag">Made To Order</span></div>
+        <div class="service-link">Design Yours <span>→</span></div>
       </a>
     </div>
   </div>
@@ -527,7 +535,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <footer>
   <div class="container"><div class="footer-inner">
     <div class="footer-copy">&copy; 2026 <a href="#hero">Design Mainline LLC</a>. All rights reserved.<br><span style="font-size:.65rem">SkateHubba™ is a trademark of Design Mainline LLC (USPTO SN 99356919)</span></div>
-    <ul class="footer-links"><li><a href="#services">Services</a></li><li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li><li><a href="/forge">iGrinder</a></li><li><a href="#about">About</a></li><li><a href="#contact">Contact</a></li></ul>
+    <ul class="footer-links"><li><a href="/">Home</a></li><li><a href="/originals">Originals</a></li><li><a href="/igrinder">iGrinder</a></li><li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li><li><a href="#contact">Contact</a></li></ul>
   </div></div>
 </footer>
 

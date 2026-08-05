@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGrinder — Turn Any Image Into a 3D-Printable STL · $9 One-Time</title>
+<meta name="description" content="iGrinder converts any photo, logo, or sketch into a 3D-printable STL file in your browser. Free live preview. $9 unlocks the file forever — no subscription, no watermark, commercial license included.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iGrinder — 2D Image to 3D STL · $9 One-Time">
+<meta property="og:description" content="Drop an image, get a 3D-printable STL. $9 one-time, no subscription, no watermark. Forging thoughts into reality.">
+<meta property="og:site_name" content="Design Mainline">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#8B7332;--black:#060606;--surface:#0C0C0C;--card:#111111;--card-hover:#161616;--border:rgba(198,165,75,0.1);--border-strong:rgba(198,165,75,0.25);--white:#F2ECE0;--muted:#8A8070;--section-pad:clamp(5rem,12vh,9rem)}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;font-weight:300;background:var(--black);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+a,button{color:inherit}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+#circuit-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035}
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}.reveal-delay-4{transition-delay:.4s}
+.gold{color:var(--gold)}
+.divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border-strong),transparent)}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;transition:all .5s cubic-bezier(.16,1,.3,1)}
+nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.9rem;text-decoration:none}
+.nav-logo svg{width:38px;height:38px;transition:transform .4s}
+.nav-logo:hover svg{transform:rotate(15deg) scale(1.05)}
+.nav-wordmark{font-family:'Cinzel',serif;font-weight:600;font-size:.95rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-btn{display:inline-flex;align-items:center;padding:.6rem 1.5rem;border:1px solid var(--gold);color:var(--gold);background:0 0;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s}
+.nav-btn:hover{background:var(--gold);color:var(--black)}
+.hamburger{display:none;flex-direction:column;gap:6px;cursor:pointer;background:0 0;border:none;padding:4px;z-index:1001}
+.hamburger span{display:block;width:26px;height:1.5px;background:var(--gold);transition:all .3s;transform-origin:center}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(6,6,6,.97);backdrop-filter:blur(30px);z-index:999;flex-direction:column;justify-content:center;align-items:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--white);text-decoration:none;font-family:'Cinzel',serif;font-size:1.8rem;font-weight:400;letter-spacing:.08em;transition:color .3s}
+.mobile-menu a:hover{color:var(--gold)}
+
+/* BUTTONS */
+.btn-primary{display:inline-block;padding:.9rem 2.4rem;background:var(--gold);color:var(--black);border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transform:translateX(-100%);transition:transform .6s}
+.btn-primary:hover::before{transform:translateX(100%)}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-ghost{display:inline-block;padding:.9rem 2.4rem;background:0 0;color:var(--white);border:1px solid var(--border-strong);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+
+/* SECTION HEADERS */
+.section-label{font-size:.68rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:1rem}
+.section-label::before{content:'';width:30px;height:1px;background:var(--gold)}
+.section-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:1rem}
+.section-subtitle{color:var(--muted);font-size:1rem;max-width:520px;line-height:1.8}
+
+/* FORGE SPOTLIGHT (the page hero) */
+.forge-spotlight{position:relative;min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 5rem;overflow:hidden;border-bottom:1px solid var(--border)}
+.forge-spotlight::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.09) 0%,rgba(198,165,75,.03) 35%,transparent 70%);top:-30%;left:-15%;pointer-events:none;z-index:0}
+.forge-spotlight::after{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(198,165,75,.06) 0%,transparent 65%);bottom:-40%;right:-10%;pointer-events:none;z-index:0}
+.forge-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;align-items:center;position:relative;z-index:2;max-width:1200px;margin:0 auto}
+.forge-content{opacity:0;animation:fadeUp .9s ease .25s forwards}
+.forge-eyebrow{display:inline-flex;align-items:center;gap:.7rem;padding:.45rem 1.2rem;border:1px solid var(--gold);border-radius:100px;font-size:.65rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.8rem;background:rgba(198,165,75,.04)}
+.forge-eyebrow .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:pulse 2.2s ease-in-out infinite}
+.forge-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(2.6rem,6vw,5rem);line-height:1.02;letter-spacing:.01em;margin-bottom:1.5rem;opacity:1;animation:none}
+.forge-title .gold{color:var(--gold)}
+.forge-desc{font-size:1.05rem;color:var(--muted);max-width:560px;line-height:1.75;margin-bottom:2rem}
+.forge-desc strong{color:var(--white);font-weight:400}
+.forge-pricing{display:flex;align-items:center;gap:1rem;margin-bottom:2.2rem;flex-wrap:wrap;padding:1rem 1.25rem;border:1px solid var(--border-strong);background:rgba(198,165,75,.03);max-width:560px}
+.forge-price-amt{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:600;color:var(--gold);line-height:1}
+.forge-price-label{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-light);margin-left:.4rem}
+.forge-price-sep{color:var(--border-strong);font-size:1.4rem;line-height:1}
+.forge-price-note{color:var(--muted);font-size:.78rem;line-height:1.5;flex:1;min-width:180px}
+.forge-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.2rem}
+.forge-actions .btn-primary{padding:1rem 2.6rem;font-size:.82rem;box-shadow:0 0 0 1px rgba(198,165,75,.3),0 18px 40px -12px rgba(198,165,75,.35)}
+.forge-trust{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.forge-trust span{display:inline-flex;align-items:center;gap:.5rem}
+.forge-trust span::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.6}
+.forge-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:440px;opacity:0;animation:fadeUp .9s ease .45s forwards}
+.forge-stage{position:relative;width:100%;max-width:460px;aspect-ratio:1/1;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:center}
+.forge-tile{position:relative;aspect-ratio:1/1;background:var(--card);border:1px solid var(--border-strong);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;overflow:hidden}
+.forge-tile-label{position:absolute;top:.7rem;left:.85rem;font-size:.55rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.forge-tile-badge{position:absolute;top:.7rem;right:.85rem;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.forge-tile.input{background:linear-gradient(135deg,#0E0E0E 0%,#141008 100%)}
+.forge-tile.output{background:linear-gradient(135deg,#161108 0%,#1F1606 100%);box-shadow:inset 0 0 80px rgba(198,165,75,.06)}
+.forge-tile svg{width:75%;height:75%;display:block}
+.forge-arrow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:var(--black);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Cinzel',serif;font-size:1.1rem;z-index:5;box-shadow:0 0 0 6px var(--black),0 0 30px rgba(198,165,75,.4);animation:float 5s ease-in-out infinite}
+.forge-meta{position:absolute;bottom:-2.4rem;left:0;right:0;display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.forge-meta b{color:var(--gold);font-weight:500}
+.forge-out-3d{position:relative;width:75%;height:75%}
+.forge-out-3d svg{position:absolute;inset:0;width:100%;height:100%;animation:float 6s ease-in-out infinite}
+.forge-out-3d svg:nth-child(1){opacity:.25;transform:translate(8px,8px)}
+.forge-out-3d svg:nth-child(2){opacity:.55;transform:translate(4px,4px)}
+.forge-out-3d svg:nth-child(3){opacity:1}
+@media(max-width:980px){
+  .forge-spotlight{padding:7rem 1.5rem 4rem}
+  .forge-grid{grid-template-columns:1fr;gap:3rem;text-align:center}
+  .forge-eyebrow{margin-left:auto;margin-right:auto}
+  .forge-desc{margin-left:auto;margin-right:auto}
+  .forge-pricing{margin-left:auto;margin-right:auto;justify-content:center;text-align:left}
+  .forge-actions{justify-content:center}
+  .forge-trust{justify-content:center}
+  .forge-visual{order:-1;min-height:340px}
+  .forge-stage{max-width:360px}
+}
+
+/* FOOTER */
+footer{padding:3rem 0;border-top:1px solid var(--border)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:.75rem;color:var(--muted)}
+.footer-copy a{color:var(--gold);text-decoration:none}
+.footer-links{display:flex;gap:2rem;list-style:none}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;transition:color .3s}
+.footer-links a:hover{color:var(--gold)}
+
+/* HOW IT WORKS */
+.how{padding:var(--section-pad) 0}
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem}
+.how-step{position:relative;padding:2rem 1.8rem;border:1px solid var(--border);background:var(--card);transition:all .4s cubic-bezier(.16,1,.3,1)}
+.how-step::before{content:'';position:absolute;top:0;left:0;height:1px;width:0;background:var(--gold);transition:width .5s}
+.how-step:hover{border-color:var(--border-strong);transform:translateY(-4px)}
+.how-step:hover::before{width:100%}
+.how-step-num{font-family:'Cinzel',serif;font-size:3.6rem;font-weight:400;color:rgba(198,165,75,.16);line-height:1;margin-bottom:1rem;display:block}
+.how-step h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.05rem;margin-bottom:.7rem;letter-spacing:.02em}
+.how-step p{color:var(--muted);font-size:.88rem;line-height:1.8}
+
+/* USE CASES */
+.use-cases{padding:var(--section-pad) 0;background:linear-gradient(180deg,transparent 0%,rgba(198,165,75,.015) 50%,transparent 100%)}
+.use-cases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:4rem}
+.use-case{padding:1.8rem;border:1px solid var(--border);background:var(--card);transition:all .4s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;gap:.4rem}
+.use-case:hover{border-color:var(--border-strong);background:var(--card-hover);transform:translateY(-3px)}
+.use-case-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:.8rem;border:1px solid var(--border-strong)}
+.use-case h4{font-family:'Cinzel',serif;font-size:.98rem;font-weight:500;letter-spacing:.02em;margin-bottom:.4rem}
+.use-case p{color:var(--muted);font-size:.83rem;line-height:1.7}
+
+/* WHY (features) */
+.why{padding:var(--section-pad) 0}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:4rem}
+.why-card{padding:1.7rem 1.5rem;border:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;gap:.4rem;transition:border-color .4s}
+.why-card:hover{border-color:var(--border-strong)}
+.why-card-icon{color:var(--gold);margin-bottom:.6rem}
+.why-card h4{font-family:'Cinzel',serif;font-size:.95rem;font-weight:500;letter-spacing:.02em;margin-bottom:.3rem}
+.why-card p{color:var(--muted);font-size:.82rem;line-height:1.7}
+
+/* PRICING */
+.pricing{padding:var(--section-pad) 0;position:relative}
+.pricing-card{max-width:560px;margin:4rem auto 0;padding:3.5rem 2.6rem;background:linear-gradient(180deg,var(--card) 0%,#15110A 100%);border:1px solid var(--gold);position:relative;text-align:center;box-shadow:0 30px 80px -20px rgba(198,165,75,.22),inset 0 0 60px rgba(198,165,75,.03)}
+.pricing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold-light),transparent)}
+.pricing-eyebrow{display:inline-block;font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:1.3rem;padding:.45rem 1.1rem;border:1px solid var(--border-strong);border-radius:100px}
+.pricing-amount{font-family:'Cinzel',serif;font-weight:600;font-size:5.4rem;color:var(--gold);line-height:1;margin-bottom:.4rem;letter-spacing:.01em}
+.pricing-amount sup{font-size:1.7rem;vertical-align:top;font-weight:500;margin-right:.15rem;opacity:.85;top:.6rem;position:relative}
+.pricing-frequency{font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.pricing-tagline{color:var(--white);font-size:.95rem;margin-bottom:2rem;font-weight:300}
+.pricing-list{list-style:none;text-align:left;margin:1.2rem 0 1.6rem;padding:1.6rem 0 0;border-top:1px solid var(--border)}
+.pricing-list li{padding:.55rem 0;color:var(--white);font-size:.88rem;display:flex;align-items:center;gap:.8rem;font-weight:300}
+.pricing-list li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(198,165,75,.12);color:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5L4 7L8 3' stroke='%23C6A54B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
+.pricing-card .btn-primary{width:100%;text-align:center;padding:1.05rem;font-size:.82rem;border:none;letter-spacing:.18em}
+.pricing-foot{margin-top:1.1rem;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.pricing-vs{display:flex;justify-content:center;gap:2rem;margin-top:3rem;font-size:.78rem;color:var(--muted);flex-wrap:wrap;text-align:center}
+.pricing-vs-item{padding:.4rem 0}
+.pricing-vs-item strong{color:var(--gold);font-weight:500;display:block;font-family:'Cinzel',serif;font-size:1rem;margin-bottom:.25rem}
+
+/* FAQ */
+.faq{padding:var(--section-pad) 0}
+.faq-list{max-width:780px;margin:4rem auto 0;display:flex;flex-direction:column;gap:.6rem}
+.faq-item{border:1px solid var(--border);background:var(--card);transition:border-color .3s}
+.faq-item[open]{border-color:var(--border-strong)}
+.faq-item summary{padding:1.3rem 1.5rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-family:'Cinzel',serif;font-weight:500;font-size:.95rem;color:var(--white);transition:color .3s}
+.faq-item summary:hover{color:var(--gold)}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';color:var(--gold);font-size:1.5rem;font-weight:300;transition:transform .3s;flex-shrink:0;line-height:.7}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-body{padding:0 1.5rem 1.4rem;color:var(--muted);font-size:.88rem;line-height:1.85}
+.faq-body strong{color:var(--white);font-weight:400}
+
+/* FINAL CTA */
+.final-cta{padding:var(--section-pad) 0;position:relative;overflow:hidden}
+.final-cta-inner{max-width:880px;margin:0 auto;padding:4.5rem 3rem;text-align:center;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(198,165,75,.05),rgba(198,165,75,.015));position:relative}
+.final-cta-inner::before,.final-cta-inner::after{content:'';position:absolute;width:70px;height:70px;border:1px solid var(--gold);opacity:.5}
+.final-cta-inner::before{top:-12px;left:-12px;border-right:none;border-bottom:none}
+.final-cta-inner::after{bottom:-12px;right:-12px;border-left:none;border-top:none}
+.final-cta h2{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.2}
+.final-cta p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto 2.2rem;line-height:1.8}
+.final-cta .btn-primary{padding:1.05rem 3rem;font-size:.85rem;letter-spacing:.18em}
+
+/* STUDIO MINI (record-keeping) */
+.studio-mini{padding:4rem 0 3rem;border-top:1px solid var(--border)}
+.studio-mini-inner{max-width:780px;margin:0 auto;padding:0 2rem;text-align:center}
+.studio-mini-label{font-size:.58rem;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.studio-mini h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.2rem;margin-bottom:1rem}
+.studio-mini p{color:var(--muted);font-size:.86rem;line-height:1.85;margin-bottom:1rem}
+.studio-mini p strong{color:var(--white);font-weight:400}
+.studio-mini-other{margin-top:1.4rem;font-size:.74rem;color:var(--muted);letter-spacing:.04em}
+.studio-mini-other a{color:var(--gold);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s;padding:0 .15rem}
+.studio-mini-other a:hover{border-bottom-color:var(--gold)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.how-steps{grid-template-columns:1fr}.use-cases-grid{grid-template-columns:repeat(2,1fr)}.why-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){nav{padding:1rem 1.5rem}nav.scrolled{padding:.7rem 1.5rem}.nav-links{display:none}.hamburger{display:flex}.container{padding:0 1.5rem}.use-cases-grid,.why-grid{grid-template-columns:1fr}.btn-primary,.btn-ghost{width:100%;max-width:300px;text-align:center}.final-cta-inner{padding:3rem 1.5rem}.pricing-card{padding:2.6rem 1.6rem;margin:3rem 1rem 0}.pricing-amount{font-size:4.4rem}.pricing-vs{flex-direction:column;gap:1rem}.footer-inner{flex-direction:column;gap:1.5rem;text-align:center}}
+</style>
+</head>
+<body>
+<canvas id="circuit-canvas"></canvas>
+
+<nav id="nav">
+  <a href="#forge" class="nav-logo">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 8L88 73H12L50 8Z" stroke="#C6A54B" stroke-width="2" fill="none"/><path d="M50 22L76 68H24L50 22Z" stroke="#C6A54B" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="50" cy="8" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="12" cy="73" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="88" cy="73" r="2" fill="#C6A54B" opacity="0.6"/></svg>
+    <span class="nav-wordmark">iGrinder</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/studio">Work</a></li>
+    <li><a href="/originals">Originals</a></li>
+    <li><a href="#forge">iGrinder</a></li>
+    <li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li>
+    <li><a href="/studio#about">About</a></li>
+    <li><a href="/studio#contact" class="nav-btn">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/studio">Work</a><a href="/originals">Originals</a><a href="#forge">iGrinder</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
+</div>
+
+<section class="forge-spotlight" id="forge">
+  <div class="forge-grid">
+    <div class="forge-content">
+      <div class="forge-eyebrow"><span class="badge-dot"></span> Flagship Tool · Live Now</div>
+      <h1 class="forge-title">Forge thoughts <br>into <span class="gold">reality</span>.</h1>
+      <p class="forge-desc"><strong>iGrinder</strong> turns any photo, logo, or sketch into a 3D-printable STL file — right in your browser. Free live preview. One file. Yours forever.</p>
+      <div class="forge-pricing">
+        <span><span class="forge-price-amt">$9</span><span class="forge-price-label">one-time</span></span>
+        <span class="forge-price-sep">|</span>
+        <span class="forge-price-note">No subscription. No watermark. Commercial license included.</span>
+      </div>
+      <div class="forge-actions">
+        <a href="/forge" class="btn-primary">Try iGrinder — Free Preview</a>
+        <a href="#how" class="btn-ghost">See How It Works</a>
+      </div>
+      <div class="forge-trust">
+        <span>Browser-based · no install</span>
+        <span>STL ready in under 30s</span>
+        <span>Runs on your device</span>
+      </div>
+    </div>
+    <div class="forge-visual" aria-hidden="true">
+      <div class="forge-stage">
+        <div class="forge-tile input">
+          <span class="forge-tile-label">Input · 2D</span>
+          <span class="forge-tile-badge">PNG / JPG / SVG</span>
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="2" fill="none"/><circle cx="50" cy="12" r="2.4" fill="#C6A54B"/><circle cx="12" cy="78" r="2.4" fill="#C6A54B"/><circle cx="88" cy="78" r="2.4" fill="#C6A54B"/></svg>
+        </div>
+        <div class="forge-tile output">
+          <span class="forge-tile-label">Output · 3D</span>
+          <span class="forge-tile-badge">.STL</span>
+          <div class="forge-out-3d">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.4" fill="none"/></svg>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.6" fill="none"/></svg>
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.8" fill="none"/><line x1="50" y1="12" x2="58" y2="4" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="88" y1="78" x2="96" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="12" y1="78" x2="20" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/></svg>
+          </div>
+        </div>
+        <div class="forge-arrow">→</div>
+        <div class="forge-meta"><span>2D Image</span><span><b>Extruded</b> · STL</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="how" id="how">
+  <div class="container">
+    <div class="reveal"><div class="section-label">How It Works</div><div class="section-title">From image to STL in <span class="gold">three steps</span></div><div class="section-subtitle">No software to install. No login to preview. Just drop, dial, download.</div></div>
+    <div class="how-steps">
+      <div class="how-step reveal reveal-delay-1">
+        <span class="how-step-num">01</span>
+        <h3>Drop your image</h3>
+        <p>Photo, logo, sketch, or vector. PNG, JPG, or SVG up to 10&nbsp;MB. Your file never leaves your browser.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <span class="how-step-num">02</span>
+        <h3>Dial in the 3D</h3>
+        <p>Adjust depth, scale, smoothing and base in real time. Live preview rotates as you tune. Looks right? Lock it in.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-3">
+        <span class="how-step-num">03</span>
+        <h3>Pay $9, download</h3>
+        <p>Stripe checkout. STL hits your downloads folder seconds later. Yours forever — no subscription, no watermark.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="use-cases" id="use-cases">
+  <div class="container">
+    <div class="reveal"><div class="section-label">Built For</div><div class="section-title">One tool, <span class="gold">every craft</span></div><div class="section-subtitle">Makers, designers, teachers, brands — anyone who has an image and wants to hold it.</div></div>
+    <div class="use-cases-grid">
+      <div class="use-case reveal reveal-delay-1">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg></div>
+        <h4>Custom Jewelry</h4>
+        <p>Earrings, pendants, signet rings, charms — turn a sketch into wearable metal in one workflow.</p>
+      </div>
+      <div class="use-case reveal reveal-delay-2">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg></div>
+        <h4>Branded Merch</h4>
+        <p>Logos, monograms, mascots — extrude into keychains, tags, awards, signage. Commercial license included.</p>
+      </div>
+      <div class="use-case reveal reveal-delay-3">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg></div>
+        <h4>Cosplay & Props</h4>
+        <p>Sigils, crests, weapon accents and armor details — print-ready in minutes, no Blender required.</p>
+      </div>
+      <div class="use-case reveal reveal-delay-1">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg></div>
+        <h4>Architecture & Models</h4>
+        <p>Floor plans, contour maps, scale models — extrude any line drawing into a tangible reference object.</p>
+      </div>
+      <div class="use-case reveal reveal-delay-2">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        <h4>Education & STEM</h4>
+        <p>Tactile teaching aids, accessibility prints, science visualizations — every worksheet becomes a model.</p>
+      </div>
+      <div class="use-case reveal reveal-delay-3">
+        <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h4>Personal Gifts</h4>
+        <p>Photo reliefs, family logos, pet portraits, custom keepsakes — meaningful, hand-printable, one of one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="why" id="why">
+  <div class="container">
+    <div class="reveal"><div class="section-label">Why iGrinder</div><div class="section-title">Built different from <span class="gold">every other converter</span></div><div class="section-subtitle">Most online STL tools are subscription traps wrapped in ad clutter. iGrinder is the opposite.</div></div>
+    <div class="why-grid">
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h4>Browser-based</h4>
+        <p>No install, no signup to preview. Works on any modern desktop browser, no plugins.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h4>Pay once, yours forever</h4>
+        <p>$9 unlocks the file permanently. No $9.99/mo trap, no token system, no recurring charge.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h4>Commercial license</h4>
+        <p>Sell what you print. Use the STL for client work, products, gifts. No royalties, no usage fees.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h4>No watermark, ever</h4>
+        <p>Clean STL files ready for any slicer — Cura, PrusaSlicer, Bambu Studio. Print as-is.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h4>Free live preview</h4>
+        <p>See it rotate in 3D before you decide. Tune depth, base, smoothing — pay only when it's right.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h4>Under 30 seconds</h4>
+        <p>From upload to downloadable STL — start to finish. No queues, no email-back delays.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="reveal"><div class="section-label">Pricing</div><div class="section-title">Pay once. <span class="gold">Print forever.</span></div><div class="section-subtitle">One transparent price. Everything included. No upsell.</div></div>
+    <div class="pricing-card reveal reveal-delay-1">
+      <span class="pricing-eyebrow">Single STL</span>
+      <div class="pricing-amount"><sup>$</sup>9</div>
+      <div class="pricing-frequency">One-Time · Per File</div>
+      <p class="pricing-tagline">Free preview. Pay only when you love it.</p>
+      <ul class="pricing-list">
+        <li>Unlimited free 3D preview</li>
+        <li>High-resolution STL download</li>
+        <li>Commercial use license</li>
+        <li>No watermark, no branding</li>
+        <li>Custom depth, scale &amp; base</li>
+        <li>30-day no-questions refund</li>
+      </ul>
+      <a href="/forge" class="btn-primary">Try iGrinder Free</a>
+      <div class="pricing-foot">Stripe-secured checkout · No card needed to preview</div>
+    </div>
+    <div class="pricing-vs reveal reveal-delay-2">
+      <div class="pricing-vs-item"><strong>vs $9.99/mo</strong>typical online STL converter</div>
+      <div class="pricing-vs-item"><strong>vs $49+ once</strong>desktop CAD software</div>
+      <div class="pricing-vs-item"><strong>vs hours of work</strong>manual modeling in Blender</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="reveal"><div class="section-label">Common Questions</div><div class="section-title">Everything you need <span class="gold">to know</span></div></div>
+    <div class="faq-list">
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>What file types can I upload?</summary>
+        <div class="faq-body">PNG, JPG, and SVG up to 10&nbsp;MB. Black-on-white silhouettes and high-contrast logos give the cleanest results, but iGrinder handles full photos too — it converts brightness into depth.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>What 3D printers does this work with?</summary>
+        <div class="faq-body">Any printer that accepts STL files — which is essentially all of them. We've tested Bambu Lab, Prusa, Creality, Elegoo, Anycubic, and Formlabs. The STL imports cleanly into Cura, PrusaSlicer, Bambu Studio, Lychee, and Chitubox.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Do I really own the file forever?</summary>
+        <div class="faq-body"><strong>Yes.</strong> Once you pay $9, the STL is yours — download it, print it, modify it, share it with your slicer, archive it for 20 years. There's no DRM, no recurring charge, no expiring link.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Can I use the STL commercially?</summary>
+        <div class="faq-body"><strong>Yes — commercial license is included at no extra cost.</strong> Sell what you print, use it in client work, list it on Etsy, give it as a wedding favor. Just don't redistribute the raw STL as your own product.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Is there a refund?</summary>
+        <div class="faq-body">30-day no-questions refund. If the file isn't what you expected, email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a> and we'll refund the $9. We'd rather lose a sale than leave you frustrated.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>How is my payment information handled?</summary>
+        <div class="faq-body">Payments run through <strong>Stripe</strong>, the same processor used by Shopify, Lyft, and Amazon. Card details never touch our servers — Stripe is PCI-DSS Level 1 certified (the highest tier). All traffic is HTTPS-encrypted end-to-end.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Does my image leave my browser?</summary>
+        <div class="faq-body">No. The 2D-to-3D conversion runs entirely client-side in WebGL. Your image is processed locally on your device and only the resulting STL is generated. We don't store your uploads.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Volume / bulk licensing?</summary>
+        <div class="faq-body">Need 50+ STLs for a class, agency, or batch project? Email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a> for a volume rate. We respond within 24 hours.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="container">
+    <div class="final-cta-inner reveal">
+      <h2>Forge yours <span class="gold">now</span>.</h2>
+      <p>Free preview in seconds. $9 unlocks the file forever. No subscription, no email needed to start.</p>
+      <a href="/forge" class="btn-primary">Open iGrinder →</a>
+    </div>
+  </div>
+</section>
+
+<section class="studio-mini" id="studio">
+  <div class="studio-mini-inner">
+    <div class="studio-mini-label">The Studio</div>
+    <h3>Built by <span class="gold">Design Mainline</span></h3>
+    <p>iGrinder is built and operated by <strong>Design Mainline LLC</strong> — a luxury technology studio in Southern California specializing in smart environment design and custom software. Questions, partnerships, or volume licensing? <a href="mailto:jason@designmainline.com" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)">jason@designmainline.com</a></p>
+    <div class="studio-mini-other">Other work: <a href="/originals">Mainline Originals</a> · <a href="/studio">Studio Services</a> · <a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="container"><div class="footer-inner">
+    <div class="footer-copy">&copy; 2026 <a href="/">Design Mainline LLC</a>. iGrinder is a tool by Design Mainline.<br><span style="font-size:.65rem">Stripe-secured payments · SSL encrypted · No card data on our servers</span></div>
+    <ul class="footer-links"><li><a href="#how">How It Works</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li><li><a href="/originals">Originals</a></li><li><a href="/studio">Studio</a></li><li><a href="/forge" style="color:var(--gold)">Try Free</a></li></ul>
+  </div></div>
+</footer>
+
+<script>
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
+const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');mobileMenu.classList.toggle('open');document.body.style.overflow=mobileMenu.classList.contains('open')?'hidden':''});
+function closeMobile(){hamburger.classList.remove('active');mobileMenu.classList.remove('open');document.body.style.overflow=''}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){const t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();closeMobile();window.scrollTo({top:t.getBoundingClientRect().top+window.pageYOffset-80,behavior:'smooth'})}})});
+document.querySelectorAll('.mobile-menu a').forEach(a=>{a.addEventListener('click',closeMobile)});
+const reveals=document.querySelectorAll('.reveal');
+const observer=new IntersectionObserver(e=>{e.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(el=>observer.observe(el));
+const sections=document.querySelectorAll('section[id]'),navLinks=document.querySelectorAll('.nav-links a:not(.nav-btn)');
+window.addEventListener('scroll',()=>{let c='';sections.forEach(s=>{if(window.pageYOffset>=s.offsetTop-150)c=s.getAttribute('id')});navLinks.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+c)})});
+const canvas=document.getElementById('circuit-canvas'),ctx=canvas.getContext('2d');let w,h;
+function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}resize();window.addEventListener('resize',()=>{resize();drawCircuit()});
+function drawCircuit(){ctx.clearRect(0,0,w,h);ctx.strokeStyle='#C6A54B';ctx.lineWidth=.8;const sp=60,cols=Math.ceil(w/sp),rows=Math.ceil(h/sp);let seed=42;function rng(){seed=(seed*16807)%2147483647;return(seed-1)/2147483646}for(let r=0;r<rows;r++){const y=r*sp+sp/2;for(let c=0;c<cols-1;c++){if(rng()>.65){const x1=c*sp+sp/2,x2=x1+sp*(1+Math.floor(rng()*2));ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(Math.min(x2,w),y);ctx.stroke()}}}for(let c=0;c<cols;c++){const x=c*sp+sp/2;for(let r=0;r<rows-1;r++){if(rng()>.7){const y1=r*sp+sp/2;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x,y1+sp);ctx.stroke()}}}ctx.fillStyle='#C6A54B';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(rng()>.82){ctx.beginPath();ctx.arc(c*sp+sp/2,r*sp+sp/2,2,0,Math.PI*2);ctx.fill()}for(let i=0;i<6;i++)if(rng()>.3){const x=Math.floor(rng()*cols)*sp+sp/2,y=Math.floor(rng()*rows)*sp+sp/2;ctx.strokeRect(x-10,y-6,20,12)}}drawCircuit();
+</script>
+</body>
+</html>
