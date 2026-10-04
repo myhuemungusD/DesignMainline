@@ -12,6 +12,8 @@ cp -R "$SRC" "$DEST"
 for f in "$DEST/index.html" "$DEST/about.html"; do
   sed -i.bak -e 's#<head>#<head><base href="/forge/">#' "$f" && rm "$f.bak"
 done
+# Bundled fonts are for personal use only; strip them from the public copy.
+node "$(dirname "$0")/public-fonts.mjs" "$DEST"
 # The offline worker (sw.js) pins every file to a content hash, so rebuild it for the edited HTML using the
 # app's own build script; otherwise the worker's install fails on every visit.
 TMP="$(mktemp -d)"

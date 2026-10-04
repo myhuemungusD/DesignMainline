@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://designmainline.com/sitemap.xml
+Sitemap: https://www.designmainline.com/sitemap.xml
