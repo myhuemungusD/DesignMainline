@@ -1,55 +1,38 @@
-# Mainline Forge — Setup Guide
+# Design Mainline — Site Setup
 
-A paywalled 2D-image-to-3D-STL tool for designmainline.com. **$9 Stripe Buy Button → unlock download.** No backend required.
+Static site deployed on Vercel. No build step.
 
-## Files
+## Pages
 
-| File | Purpose |
-|---|---|
-| `tool.html` | The Forge UI. Drop into your repo root. Served at `/tool.html`, `/tool`, or `/forge`. |
-| `vercel.json` | URL rewrites for `/forge` and `/tool` |
+| URL | File | Notes |
+|---|---|---|
+| `/` | `index.html` | Company homepage + slideshow |
+| `/originals`, `/sleeves` | `sleeves.html` | Mainline Sleeves product page + live configurator |
+| `/caviot` | `caviot.html` | Caviot Studio product page (`/igrinder` 301-redirects here) |
+| `/forge` | `forge/` | **The Caviot Studio app itself** (`/tool` 301-redirects here) |
+| `/studio` | `studio.html` | Studio services, about, contact form |
 
-## 1. Deploy
+Routes, redirects and headers live in `vercel.json`. `.vercelignore` keeps repo-only files (`uploads/`, `scraps/`, `*.zip`, `*.md`) off the live site.
 
-Drop `tool.html` and `vercel.json` next to your existing `index.html` and push. Vercel rebuilds, page is live at `/forge`.
+## Updating Caviot Studio
 
-## 2. Configure your Stripe Buy Button redirect
+The app is developed in [`myhuemungusD/caviot-studio`](https://github.com/myhuemungusD/caviot-studio). `forge/` is a copy of that repo's `dist/` folder. To ship a new build:
 
-Your live buy button (id `buy_btn_1TQnYKD7tGQxpyHP9PcVeEmE`) is already embedded in `tool.html`.
-
-In your Stripe Dashboard → **Buy Buttons** → edit this button → **After payment**, set the success URL to:
-
-```
-https://designmainline.com/forge?paid=1
-```
-
-That `?paid=1` is what the page watches for to auto-unlock the download. Without that redirect setup, customers will pay but won't auto-unlock — they'll have to click the **"I already paid — unlock"** button (which is also there as a safety net).
-
-## 3. Link from the main site
-
-Add a fourth service card or nav link in `index.html`:
-
-```html
-<a href="/forge" class="btn-primary">Mainline Forge — $9</a>
+```bash
+git clone https://github.com/myhuemungusD/caviot-studio ../caviot-studio   # or git pull
+scripts/sync-caviot.sh ../caviot-studio
+git add forge && git commit -m "Update Caviot Studio build" && git push
 ```
 
-## How the unlock works
+The script copies `dist/` into `forge/` and adds `<base href="/forge/">` so the app's relative paths resolve correctly at `/forge`.
 
-1. User clicks the Stripe Buy Button → goes to Stripe-hosted checkout.
-2. After payment, Stripe redirects back to `/forge?paid=1`.
-3. Page sees `?paid=1`, sets `localStorage[mainline_forge_unlock_v1]`, swaps to the unlocked UI.
-4. Future visits in the same browser stay unlocked (until they clear site data).
+Caviot Studio is currently **free** (launch edition). To charge later, add a checkout to the app and update the Pricing section and FAQ in `caviot.html`.
 
-If the redirect ever fails, the **"I already paid — unlock"** button under the buy button is a manual fallback. It asks for confirmation before unlocking.
+## Adding photos
 
-## Pricing
+- **Homepage slides:** add `assets/slides/02-caviot-studio.jpg`, `03-skatehubba.jpg`, `04-studio.jpg` (≈1600px wide), then un-comment the matching `<img>` line in `index.html`.
+- **Sleeves gallery:** add `assets/sleeves/04.webp`–`06.webp` (1200×1200), then un-comment those entries in the `SHOTS` list in `sleeves.html`.
 
-Change the price in your Stripe Dashboard → Products. The buy button always reflects whatever Stripe says.
+## Ordering (Mainline Sleeves)
 
-## Anti-piracy notes
-
-This is honor-system gating — anyone with dev tools can run `localStorage.setItem('mainline_forge_unlock_v1','x')` to bypass. For a $9 maker tool that's the right tradeoff; the audience is honest hobbyists. If you ever want true server-side verification, drop me a note and I'll wire up a Vercel function that calls Stripe's API to confirm payment.
-
-## License copy
-
-Footer says: *"Single-purchase license · Files yours to print, sell, or modify."* Edit in `tool.html` to taste.
+"Order This Sleeve" opens a pre-filled email with the customer's text, colors and finish. Replace the `mailto:` in `updateOrderLink()` (`sleeves.html`) with a checkout link when one exists.

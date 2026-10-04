@@ -1,2 +1,2 @@
 # DesignMainline
-website to advertize wraps for the shop
+Website for Design Mainline — Mainline Originals, Caviot Studio and the studio. See [SETUP.md](SETUP.md).

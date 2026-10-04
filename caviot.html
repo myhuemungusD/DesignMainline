@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iGrinder — Turn Any Image Into a 3D-Printable STL · $9 One-Time</title>
-<meta name="description" content="iGrinder converts any photo, logo, or sketch into a 3D-printable STL file in your browser. Free live preview. $9 unlocks the file forever — no subscription, no watermark, commercial license included.">
+<title>Caviot Studio — Turn Artwork Into 3D-Printable Sleeves &amp; Reliefs · Free</title>
+<meta name="description" content="Caviot Studio turns artwork, lettering and patterns into custom 3D-printable sleeves and reliefs, right in your browser. Free launch edition: no account, no payment, export STL or OBJ.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="iGrinder — 2D Image to 3D STL · $9 One-Time">
-<meta property="og:description" content="Drop an image, get a 3D-printable STL. $9 one-time, no subscription, no watermark. Forging thoughts into reality.">
+<meta property="og:title" content="Caviot Studio — Your Design. A Physical Thing.">
+<meta property="og:description" content="Turn artwork, lettering and patterns into 3D-printable sleeves and reliefs. Free, in your browser. Export STL or OBJ.">
 <meta property="og:site_name" content="Design Mainline">
+<meta name="theme-color" content="#060606">
+<link rel="canonical" href="https://designmainline.com/caviot">
+<meta property="og:url" content="https://designmainline.com/caviot">
+<meta property="og:image" content="https://designmainline.com/assets/og/caviot-studio.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"></noscript>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#8B7332;--black:#060606;--surface:#0C0C0C;--card:#111111;--card-hover:#161616;--border:rgba(198,165,75,0.1);--border-strong:rgba(198,165,75,0.25);--white:#F2ECE0;--muted:#8A8070;--section-pad:clamp(5rem,12vh,9rem)}
@@ -56,6 +65,10 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .mobile-menu.open{display:flex}
 .mobile-menu a{color:var(--white);text-decoration:none;font-family:'Cinzel',serif;font-size:1.8rem;font-weight:400;letter-spacing:.08em;transition:color .3s}
 .mobile-menu a:hover{color:var(--gold)}
+
+.nav-links a,.nav-wordmark{white-space:nowrap}
+@media(max-width:1200px){.nav-links{gap:1.6rem}}
+@media(max-width:1024px){.nav-links{display:none}.hamburger{display:flex}}
 
 /* BUTTONS */
 .btn-primary{display:inline-block;padding:.9rem 2.4rem;background:var(--gold);color:var(--black);border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s;position:relative;overflow:hidden}
@@ -125,7 +138,7 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 footer{padding:3rem 0;border-top:1px solid var(--border)}
 .footer-inner{display:flex;justify-content:space-between;align-items:center}
 .footer-copy{font-size:.75rem;color:var(--muted)}
-.footer-copy a{color:var(--gold);text-decoration:none}
+.footer-copy a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
 .footer-links{display:flex;gap:2rem;list-style:none}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;transition:color .3s}
 .footer-links a:hover{color:var(--gold)}
@@ -138,6 +151,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 .how-step:hover{border-color:var(--border-strong);transform:translateY(-4px)}
 .how-step:hover::before{width:100%}
 .how-step-num{font-family:'Cinzel',serif;font-size:3.6rem;font-weight:400;color:rgba(198,165,75,.16);line-height:1;margin-bottom:1rem;display:block}
+.how-step-num::before{content:attr(data-n)}
 .how-step h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.05rem;margin-bottom:.7rem;letter-spacing:.02em}
 .how-step p{color:var(--muted);font-size:.88rem;line-height:1.8}
 
@@ -147,7 +161,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 .use-case{padding:1.8rem;border:1px solid var(--border);background:var(--card);transition:all .4s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;gap:.4rem}
 .use-case:hover{border-color:var(--border-strong);background:var(--card-hover);transform:translateY(-3px)}
 .use-case-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:.8rem;border:1px solid var(--border-strong)}
-.use-case h4{font-family:'Cinzel',serif;font-size:.98rem;font-weight:500;letter-spacing:.02em;margin-bottom:.4rem}
+.use-case h3{font-family:'Cinzel',serif;font-size:.98rem;font-weight:500;letter-spacing:.02em;margin-bottom:.4rem}
 .use-case p{color:var(--muted);font-size:.83rem;line-height:1.7}
 
 /* WHY (features) */
@@ -156,7 +170,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 .why-card{padding:1.7rem 1.5rem;border:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;gap:.4rem;transition:border-color .4s}
 .why-card:hover{border-color:var(--border-strong)}
 .why-card-icon{color:var(--gold);margin-bottom:.6rem}
-.why-card h4{font-family:'Cinzel',serif;font-size:.95rem;font-weight:500;letter-spacing:.02em;margin-bottom:.3rem}
+.why-card h3{font-family:'Cinzel',serif;font-size:.95rem;font-weight:500;letter-spacing:.02em;margin-bottom:.3rem}
 .why-card p{color:var(--muted);font-size:.82rem;line-height:1.7}
 
 /* PRICING */
@@ -213,57 +227,58 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 
 /* RESPONSIVE */
 @media(max-width:1024px){.how-steps{grid-template-columns:1fr}.use-cases-grid{grid-template-columns:repeat(2,1fr)}.why-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){nav{padding:1rem 1.5rem}nav.scrolled{padding:.7rem 1.5rem}.nav-links{display:none}.hamburger{display:flex}.container{padding:0 1.5rem}.use-cases-grid,.why-grid{grid-template-columns:1fr}.btn-primary,.btn-ghost{width:100%;max-width:300px;text-align:center}.final-cta-inner{padding:3rem 1.5rem}.pricing-card{padding:2.6rem 1.6rem;margin:3rem 1rem 0}.pricing-amount{font-size:4.4rem}.pricing-vs{flex-direction:column;gap:1rem}.footer-inner{flex-direction:column;gap:1.5rem;text-align:center}}
+@media(max-width:768px){nav{padding:1rem 1.5rem}nav.scrolled{padding:.7rem 1.5rem}.nav-links{display:none}.hamburger{display:flex}.container{padding:0 1.5rem}.use-cases-grid,.why-grid{grid-template-columns:1fr}.btn-primary,.btn-ghost{width:100%;max-width:300px;text-align:center}.final-cta-inner{padding:3rem 1.5rem}.pricing-card{padding:2.6rem 1.6rem;margin:3rem 1rem 0}.pricing-amount{font-size:4.4rem}.pricing-vs{flex-direction:column;gap:1rem}.footer-inner{flex-direction:column;gap:1.5rem;text-align:center}.footer-links{flex-wrap:wrap;justify-content:center;gap:1.2rem}}
 </style>
 </head>
 <body>
-<canvas id="circuit-canvas"></canvas>
+<canvas id="circuit-canvas" aria-hidden="true"></canvas>
 
 <nav id="nav">
-  <a href="#forge" class="nav-logo">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 8L88 73H12L50 8Z" stroke="#C6A54B" stroke-width="2" fill="none"/><path d="M50 22L76 68H24L50 22Z" stroke="#C6A54B" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="50" cy="8" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="12" cy="73" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="88" cy="73" r="2" fill="#C6A54B" opacity="0.6"/></svg>
-    <span class="nav-wordmark">iGrinder</span>
+  <a href="#forge" class="nav-logo" aria-label="Caviot Studio — back to top">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M50 8L88 73H12L50 8Z" stroke="#C6A54B" stroke-width="2" fill="none"/><path d="M50 22L76 68H24L50 22Z" stroke="#C6A54B" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="50" cy="8" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="12" cy="73" r="2" fill="#C6A54B" opacity="0.6"/><circle cx="88" cy="73" r="2" fill="#C6A54B" opacity="0.6"/></svg>
+    <span class="nav-wordmark">Caviot Studio</span>
   </a>
   <ul class="nav-links">
     <li><a href="/studio">Work</a></li>
     <li><a href="/originals">Originals</a></li>
-    <li><a href="#forge">iGrinder</a></li>
+    <li><a href="#forge">Caviot Studio</a></li>
     <li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li>
     <li><a href="/studio#about">About</a></li>
     <li><a href="/studio#contact" class="nav-btn">Contact</a></li>
   </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="/studio">Work</a><a href="/originals">Originals</a><a href="#forge">iGrinder</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
+  <a href="/studio">Work</a><a href="/originals">Originals</a><a href="#forge">Caviot Studio</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
 </div>
 
+<main>
 <section class="forge-spotlight" id="forge">
   <div class="forge-grid">
     <div class="forge-content">
-      <div class="forge-eyebrow"><span class="badge-dot"></span> Flagship Tool · Live Now</div>
+      <div class="forge-eyebrow"><span class="badge-dot"></span> Free Launch Edition · Live Now</div>
       <h1 class="forge-title">Forge thoughts <br>into <span class="gold">reality</span>.</h1>
-      <p class="forge-desc"><strong>iGrinder</strong> turns any photo, logo, or sketch into a 3D-printable STL file — right in your browser. Free live preview. One file. Yours forever.</p>
+      <p class="forge-desc"><strong>Caviot Studio</strong> turns artwork, lettering and patterns into custom 3D-printable sleeves and reliefs — right in your browser. Shape it in a live 3D workspace, then export it for your printer.</p>
       <div class="forge-pricing">
-        <span><span class="forge-price-amt">$9</span><span class="forge-price-label">one-time</span></span>
+        <span><span class="forge-price-amt">Free</span><span class="forge-price-label">launch edition</span></span>
         <span class="forge-price-sep">|</span>
-        <span class="forge-price-note">No subscription. No watermark. Commercial license included.</span>
+        <span class="forge-price-note">No account. No payment step. Export STL + OBJ.</span>
       </div>
       <div class="forge-actions">
-        <a href="/forge" class="btn-primary">Try iGrinder — Free Preview</a>
+        <a href="/forge" class="btn-primary">Open Caviot Studio — Free</a>
         <a href="#how" class="btn-ghost">See How It Works</a>
       </div>
       <div class="forge-trust">
         <span>Browser-based · no install</span>
-        <span>STL ready in under 30s</span>
-        <span>Runs on your device</span>
+        <span>Artwork stays on your device</span>
+        <span>STL + OBJ in millimeters</span>
       </div>
     </div>
     <div class="forge-visual" aria-hidden="true">
       <div class="forge-stage">
         <div class="forge-tile input">
           <span class="forge-tile-label">Input · 2D</span>
-          <span class="forge-tile-badge">PNG / JPG / SVG</span>
+          <span class="forge-tile-badge">PNG / JPG</span>
           <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="2" fill="none"/><circle cx="50" cy="12" r="2.4" fill="#C6A54B"/><circle cx="12" cy="78" r="2.4" fill="#C6A54B"/><circle cx="88" cy="78" r="2.4" fill="#C6A54B"/></svg>
         </div>
         <div class="forge-tile output">
@@ -285,22 +300,22 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="how" id="how">
   <div class="container">
-    <div class="reveal"><div class="section-label">How It Works</div><div class="section-title">From image to STL in <span class="gold">three steps</span></div><div class="section-subtitle">No software to install. No login to preview. Just drop, dial, download.</div></div>
+    <div class="reveal"><div class="section-label">How It Works</div><h2 class="section-title">From idea to print in <span class="gold">three steps</span></h2><div class="section-subtitle">No software to install. No account. Just create, calibrate, make.</div></div>
     <div class="how-steps">
       <div class="how-step reveal reveal-delay-1">
-        <span class="how-step-num">01</span>
-        <h3>Drop your image</h3>
-        <p>Photo, logo, sketch, or vector. PNG, JPG, or SVG up to 10&nbsp;MB. Your file never leaves your browser.</p>
+        <span class="how-step-num" aria-hidden="true" data-n="01"></span>
+        <h3>Create</h3>
+        <p>Bring a PNG or JPG, type your own lettering, or start from a built-in pattern. Adjust size, depth and finish in a live 3D workspace.</p>
       </div>
       <div class="how-step reveal reveal-delay-2">
-        <span class="how-step-num">02</span>
-        <h3>Dial in the 3D</h3>
-        <p>Adjust depth, scale, smoothing and base in real time. Live preview rotates as you tune. Looks right? Lock it in.</p>
+        <span class="how-step-num" aria-hidden="true" data-n="02"></span>
+        <h3>Calibrate</h3>
+        <p>Start from a preset or enter your own dimensions. Print a small fit ring to test the cavity on your actual object before the full print.</p>
       </div>
       <div class="how-step reveal reveal-delay-3">
-        <span class="how-step-num">03</span>
-        <h3>Pay $9, download</h3>
-        <p>Stripe checkout. STL hits your downloads folder seconds later. Yours forever — no subscription, no watermark.</p>
+        <span class="how-step-num" aria-hidden="true" data-n="03"></span>
+        <h3>Make</h3>
+        <p>Export STL or OBJ in millimeters. Check it in your slicer, then print with the settings that suit your material and printer.</p>
       </div>
     </div>
   </div>
@@ -309,36 +324,36 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="use-cases" id="use-cases">
   <div class="container">
-    <div class="reveal"><div class="section-label">Built For</div><div class="section-title">One tool, <span class="gold">every craft</span></div><div class="section-subtitle">Makers, designers, teachers, brands — anyone who has an image and wants to hold it.</div></div>
+    <div class="reveal"><div class="section-label">Built For</div><h2 class="section-title">One tool, <span class="gold">every craft</span></h2><div class="section-subtitle">Makers, designers, teachers, brands — anyone who has an image and wants to hold it.</div></div>
     <div class="use-cases-grid">
       <div class="use-case reveal reveal-delay-1">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg></div>
-        <h4>Custom Jewelry</h4>
+        <h3>Custom Jewelry</h3>
         <p>Earrings, pendants, signet rings, charms — turn a sketch into wearable metal in one workflow.</p>
       </div>
       <div class="use-case reveal reveal-delay-2">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg></div>
-        <h4>Branded Merch</h4>
-        <p>Logos, monograms, mascots — extrude into keychains, tags, awards, signage. Commercial license included.</p>
+        <h3>Branded Merch</h3>
+        <p>Logos, monograms, mascots — turn them into keychains, tags, awards and signage.</p>
       </div>
       <div class="use-case reveal reveal-delay-3">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/></svg></div>
-        <h4>Cosplay & Props</h4>
+        <h3>Cosplay & Props</h3>
         <p>Sigils, crests, weapon accents and armor details — print-ready in minutes, no Blender required.</p>
       </div>
       <div class="use-case reveal reveal-delay-1">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21V12h6v9"/></svg></div>
-        <h4>Architecture & Models</h4>
+        <h3>Architecture & Models</h3>
         <p>Floor plans, contour maps, scale models — extrude any line drawing into a tangible reference object.</p>
       </div>
       <div class="use-case reveal reveal-delay-2">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-        <h4>Education & STEM</h4>
+        <h3>Education & STEM</h3>
         <p>Tactile teaching aids, accessibility prints, science visualizations — every worksheet becomes a model.</p>
       </div>
       <div class="use-case reveal reveal-delay-3">
         <div class="use-case-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-        <h4>Personal Gifts</h4>
+        <h3>Personal Gifts</h3>
         <p>Photo reliefs, family logos, pet portraits, custom keepsakes — meaningful, hand-printable, one of one.</p>
       </div>
     </div>
@@ -348,37 +363,37 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="why" id="why">
   <div class="container">
-    <div class="reveal"><div class="section-label">Why iGrinder</div><div class="section-title">Built different from <span class="gold">every other converter</span></div><div class="section-subtitle">Most online STL tools are subscription traps wrapped in ad clutter. iGrinder is the opposite.</div></div>
+    <div class="reveal"><div class="section-label">Why Caviot Studio</div><h2 class="section-title">Built different from <span class="gold">every other converter</span></h2><div class="section-subtitle">Most online STL tools are subscription traps wrapped in ad clutter. Caviot Studio is the opposite.</div></div>
     <div class="why-grid">
       <div class="why-card reveal reveal-delay-1">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <h4>Browser-based</h4>
-        <p>No install, no signup to preview. Works on any modern desktop browser, no plugins.</p>
+        <h3>Browser-based</h3>
+        <p>No install, no signup. Runs in a modern browser on desktop or mobile — no plugins.</p>
       </div>
       <div class="why-card reveal reveal-delay-2">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h4>Pay once, yours forever</h4>
-        <p>$9 unlocks the file permanently. No $9.99/mo trap, no token system, no recurring charge.</p>
+        <h3>Free launch edition</h3>
+        <p>No subscription, no token system, no payment step. Open it and start designing.</p>
       </div>
       <div class="why-card reveal reveal-delay-3">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <h4>Commercial license</h4>
-        <p>Sell what you print. Use the STL for client work, products, gifts. No royalties, no usage fees.</p>
+        <h3>Portable projects</h3>
+        <p>Save your artwork and settings together as a project file and pick up exactly where you left off.</p>
       </div>
       <div class="why-card reveal reveal-delay-1">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div>
-        <h4>No watermark, ever</h4>
-        <p>Clean STL files ready for any slicer — Cura, PrusaSlicer, Bambu Studio. Print as-is.</p>
+        <h3>No watermark, ever</h3>
+        <p>Clean STL and OBJ exports in millimeters for Cura, PrusaSlicer, Bambu Studio and more.</p>
       </div>
       <div class="why-card reveal reveal-delay-2">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h4>Free live preview</h4>
-        <p>See it rotate in 3D before you decide. Tune depth, base, smoothing — pay only when it's right.</p>
+        <h3>Live 3D workspace</h3>
+        <p>Move, resize, rotate, emboss or deboss your design and see it update on the model as you go.</p>
       </div>
       <div class="why-card reveal reveal-delay-3">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-        <h4>Under 30 seconds</h4>
-        <p>From upload to downloadable STL — start to finish. No queues, no email-back delays.</p>
+        <h3>Fit before you commit</h3>
+        <p>Print a quick fit ring to check the cavity on your real object before spending hours on the full print.</p>
       </div>
     </div>
   </div>
@@ -387,27 +402,22 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="pricing" id="pricing">
   <div class="container">
-    <div class="reveal"><div class="section-label">Pricing</div><div class="section-title">Pay once. <span class="gold">Print forever.</span></div><div class="section-subtitle">One transparent price. Everything included. No upsell.</div></div>
+    <div class="reveal"><div class="section-label">Pricing</div><h2 class="section-title">Free while <span class="gold">we launch.</span></h2><div class="section-subtitle">Everything in the studio, no account and no card.</div></div>
     <div class="pricing-card reveal reveal-delay-1">
-      <span class="pricing-eyebrow">Single STL</span>
-      <div class="pricing-amount"><sup>$</sup>9</div>
-      <div class="pricing-frequency">One-Time · Per File</div>
-      <p class="pricing-tagline">Free preview. Pay only when you love it.</p>
+      <span class="pricing-eyebrow">Launch Edition</span>
+      <div class="pricing-amount">Free</div>
+      <div class="pricing-frequency">No Account · No Card</div>
+      <p class="pricing-tagline">Open it and start designing.</p>
       <ul class="pricing-list">
-        <li>Unlimited free 3D preview</li>
-        <li>High-resolution STL download</li>
-        <li>Commercial use license</li>
-        <li>No watermark, no branding</li>
-        <li>Custom depth, scale &amp; base</li>
-        <li>30-day no-questions refund</li>
+        <li>Image and text reliefs</li>
+        <li>Built-in patterns and fonts</li>
+        <li>Half sleeve, full sleeve, curved relief or flat plate</li>
+        <li>Fit ring exports</li>
+        <li>STL and OBJ exports</li>
+        <li>Portable project files</li>
       </ul>
-      <a href="/forge" class="btn-primary">Try iGrinder Free</a>
-      <div class="pricing-foot">Stripe-secured checkout · No card needed to preview</div>
-    </div>
-    <div class="pricing-vs reveal reveal-delay-2">
-      <div class="pricing-vs-item"><strong>vs $9.99/mo</strong>typical online STL converter</div>
-      <div class="pricing-vs-item"><strong>vs $49+ once</strong>desktop CAD software</div>
-      <div class="pricing-vs-item"><strong>vs hours of work</strong>manual modeling in Blender</div>
+      <a href="/forge" class="btn-primary">Open Caviot Studio</a>
+      <div class="pricing-foot">Processed on your device · No uploads</div>
     </div>
   </div>
 </section>
@@ -415,39 +425,39 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 <div class="divider"></div>
 <section class="faq" id="faq">
   <div class="container">
-    <div class="reveal"><div class="section-label">Common Questions</div><div class="section-title">Everything you need <span class="gold">to know</span></div></div>
+    <div class="reveal"><div class="section-label">Common Questions</div><h2 class="section-title">Everything you need <span class="gold">to know</span></h2></div>
     <div class="faq-list">
       <details class="faq-item reveal reveal-delay-1">
-        <summary>What file types can I upload?</summary>
-        <div class="faq-body">PNG, JPG, and SVG up to 10&nbsp;MB. Black-on-white silhouettes and high-contrast logos give the cleanest results, but iGrinder handles full photos too — it converts brightness into depth.</div>
+        <summary>What can I start from?</summary>
+        <div class="faq-body">A PNG or JPG image up to 20&nbsp;MB, your own lettering (pick a built-in font or upload your own), or one of the built-in patterns.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>What 3D printers does this work with?</summary>
-        <div class="faq-body">Any printer that accepts STL files — which is essentially all of them. We've tested Bambu Lab, Prusa, Creality, Elegoo, Anycubic, and Formlabs. The STL imports cleanly into Cura, PrusaSlicer, Bambu Studio, Lychee, and Chitubox.</div>
+        <summary>Is it really free?</summary>
+        <div class="faq-body"><strong>Yes.</strong> This is the free launch edition — no account, no subscription and no payment step. If paid plans ever arrive, they'll be announced here first.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>Do I really own the file forever?</summary>
-        <div class="faq-body"><strong>Yes.</strong> Once you pay $9, the STL is yours — download it, print it, modify it, share it with your slicer, archive it for 20 years. There's no DRM, no recurring charge, no expiring link.</div>
+        <summary>Do I need CAD experience?</summary>
+        <div class="faq-body">No CAD installation is required. You'll need an image, text or pattern, a few measurements, and a slicer to prepare the exported mesh for your printer.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>Can I use the STL commercially?</summary>
-        <div class="faq-body"><strong>Yes — commercial license is included at no extra cost.</strong> Sell what you print, use it in client work, list it on Etsy, give it as a wedding favor. Just don't redistribute the raw STL as your own product.</div>
+        <summary>What printers and slicers does it work with?</summary>
+        <div class="faq-body">Exports are standard STL and OBJ in millimeters, which open in Cura, PrusaSlicer, Bambu Studio, Lychee, Chitubox and other common slicers.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>Is there a refund?</summary>
-        <div class="faq-body">30-day no-questions refund. If the file isn't what you expected, email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a> and we'll refund the $9. We'd rather lose a sale than leave you frustrated.</div>
+        <summary>Will the presets fit my device?</summary>
+        <div class="faq-body">Presets are starting dimensions, not verified fits. Measure your object and print the fit ring first; complex shapes may still need CAD.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>How is my payment information handled?</summary>
-        <div class="faq-body">Payments run through <strong>Stripe</strong>, the same processor used by Shopify, Lyft, and Amazon. Card details never touch our servers — Stripe is PCI-DSS Level 1 certified (the highest tier). All traffic is HTTPS-encrypted end-to-end.</div>
+        <summary>Is every export guaranteed to print?</summary>
+        <div class="faq-body">No. Export checks catch open edges and degenerate triangles, but they can't confirm physical fit, strength or freedom from self-intersections. Inspect every model in your slicer and test-print before selling physical products.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>Does my image leave my browser?</summary>
-        <div class="faq-body">No. The 2D-to-3D conversion runs entirely client-side in WebGL. Your image is processed locally on your device and only the resulting STL is generated. We don't store your uploads.</div>
+        <summary>Does my artwork leave my browser?</summary>
+        <div class="faq-body">No. All design processing happens on your device. Settings and uploaded fonts stay in this browser; artwork stays in memory until you save a project file. There is no cloud backup.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
-        <summary>Volume / bulk licensing?</summary>
-        <div class="faq-body">Need 50+ STLs for a class, agency, or batch project? Email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a> for a volume rate. We respond within 24 hours.</div>
+        <summary>Custom templates or bigger projects?</summary>
+        <div class="faq-body">Need a template for a specific object, or help with a batch for a class, shop or event? Email <a href="mailto:jason@designmainline.com" style="color:var(--gold)">jason@designmainline.com</a>. We respond within 24 hours.</div>
       </details>
     </div>
   </div>
@@ -457,8 +467,8 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <div class="container">
     <div class="final-cta-inner reveal">
       <h2>Forge yours <span class="gold">now</span>.</h2>
-      <p>Free preview in seconds. $9 unlocks the file forever. No subscription, no email needed to start.</p>
-      <a href="/forge" class="btn-primary">Open iGrinder →</a>
+      <p>Free in your browser. No account, no card — open it and start designing.</p>
+      <a href="/forge" class="btn-primary">Open Caviot Studio →</a>
     </div>
   </div>
 </section>
@@ -467,15 +477,17 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <div class="studio-mini-inner">
     <div class="studio-mini-label">The Studio</div>
     <h3>Built by <span class="gold">Design Mainline</span></h3>
-    <p>iGrinder is built and operated by <strong>Design Mainline LLC</strong> — a luxury technology studio in Southern California specializing in smart environment design and custom software. Questions, partnerships, or volume licensing? <a href="mailto:jason@designmainline.com" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)">jason@designmainline.com</a></p>
+    <p>Caviot Studio is built and operated by <strong>Design Mainline LLC</strong> — a luxury technology studio in Southern California specializing in smart environment design and custom software. Questions, partnerships, or custom work? <a href="mailto:jason@designmainline.com" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)">jason@designmainline.com</a></p>
     <div class="studio-mini-other">Other work: <a href="/originals">Mainline Originals</a> · <a href="/studio">Studio Services</a> · <a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></div>
   </div>
 </section>
 
+</main>
+
 <footer>
   <div class="container"><div class="footer-inner">
-    <div class="footer-copy">&copy; 2026 <a href="/">Design Mainline LLC</a>. iGrinder is a tool by Design Mainline.<br><span style="font-size:.65rem">Stripe-secured payments · SSL encrypted · No card data on our servers</span></div>
-    <ul class="footer-links"><li><a href="#how">How It Works</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li><li><a href="/originals">Originals</a></li><li><a href="/studio">Studio</a></li><li><a href="/forge" style="color:var(--gold)">Try Free</a></li></ul>
+    <div class="footer-copy">&copy; 2026 <a href="/">Design Mainline LLC</a>. Caviot Studio is a tool by Design Mainline.<br><span style="font-size:.65rem">Runs in your browser · Artwork stays on your device</span></div>
+    <ul class="footer-links"><li><a href="#how">How It Works</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li><li><a href="/originals">Originals</a></li><li><a href="/studio">Studio</a></li><li><a href="/forge" style="color:var(--gold)">Open Studio</a></li></ul>
   </div></div>
 </footer>
 
@@ -483,8 +495,8 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60));
 const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu');
-hamburger.addEventListener('click',()=>{hamburger.classList.toggle('active');mobileMenu.classList.toggle('open');document.body.style.overflow=mobileMenu.classList.contains('open')?'hidden':''});
-function closeMobile(){hamburger.classList.remove('active');mobileMenu.classList.remove('open');document.body.style.overflow=''}
+hamburger.addEventListener('click',()=>{const open=!mobileMenu.classList.contains('open');hamburger.classList.toggle('active',open);mobileMenu.classList.toggle('open',open);hamburger.setAttribute('aria-expanded',String(open));document.body.style.overflow=open?'hidden':''});
+function closeMobile(){hamburger.classList.remove('active');mobileMenu.classList.remove('open');hamburger.setAttribute('aria-expanded','false');document.body.style.overflow=''}
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){const t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();closeMobile();window.scrollTo({top:t.getBoundingClientRect().top+window.pageYOffset-80,behavior:'smooth'})}})});
 document.querySelectorAll('.mobile-menu a').forEach(a=>{a.addEventListener('click',closeMobile)});
 const reveals=document.querySelectorAll('.reveal');

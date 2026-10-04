@@ -9,8 +9,17 @@
 <meta property="og:title" content="Mainline Sleeves — Made to Fit, Designed to Function">
 <meta property="og:description" content="A flexible protective sleeve that helps keep the battery attached and protects your device when dropped. Personalize it, then order.">
 <meta property="og:site_name" content="Design Mainline">
+<meta name="theme-color" content="#060606">
+<link rel="canonical" href="https://designmainline.com/originals">
+<meta property="og:url" content="https://designmainline.com/originals">
+<meta property="og:image" content="https://designmainline.com/assets/slides/01-originals.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"></noscript>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--gold:#C6A54B;--gold-light:#E8D48B;--gold-dark:#8B7332;--black:#060606;--surface:#0C0C0C;--card:#111111;--card-hover:#161616;--border:rgba(198,165,75,0.1);--border-strong:rgba(198,165,75,0.25);--white:#F2ECE0;--muted:#8A8070;--section-pad:clamp(5rem,12vh,9rem)}
@@ -55,6 +64,10 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .mobile-menu.open{display:flex}
 .mobile-menu a{color:var(--white);text-decoration:none;font-family:'Cinzel',serif;font-size:1.8rem;font-weight:400;letter-spacing:.08em;transition:color .3s}
 .mobile-menu a:hover{color:var(--gold)}
+
+.nav-links a,.nav-wordmark{white-space:nowrap}
+@media(max-width:1200px){.nav-links{gap:1.6rem}}
+@media(max-width:1024px){.nav-links{display:none}.hamburger{display:flex}}
 
 /* BUTTONS */
 .btn-primary{display:inline-block;padding:.9rem 2.4rem;background:var(--gold);color:var(--black);border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .35s;position:relative;overflow:hidden}
@@ -168,7 +181,7 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .customize-list li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(198,165,75,.12);flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5L4 7L8 3' stroke='%23C6A54B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
 .customize-actions{display:flex;gap:1rem;flex-wrap:wrap}
 .customize-note{border:1px solid var(--border);background:var(--card);padding:1.9rem 1.7rem}
-.customize-note h4{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;margin-bottom:1rem}
+.customize-note h3{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;margin-bottom:1rem}
 .customize-note p{color:var(--muted);font-size:.84rem;line-height:1.75;margin-bottom:.9rem}
 .customize-note p:last-child{margin-bottom:0}
 .customize-note a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)}
@@ -182,7 +195,7 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .spec-table td{padding:.95rem 0;color:var(--white);font-size:.88rem;font-weight:300}
 .spec-table td span{display:block;color:var(--muted);font-size:.76rem;margin-top:.2rem}
 .care{border:1px solid var(--border);background:var(--card);padding:1.9rem 1.7rem}
-.care h4{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;margin-bottom:1.1rem}
+.care h3{font-family:'Cinzel',serif;font-size:1rem;font-weight:500;margin-bottom:1.1rem}
 .care ul{list-style:none;display:flex;flex-direction:column;gap:.75rem}
 .care li{color:var(--muted);font-size:.84rem;line-height:1.7;display:flex;gap:.8rem;align-items:flex-start}
 .care li::before{content:'';width:14px;height:14px;margin-top:.32rem;border-radius:50%;background:rgba(198,165,75,.12);flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5L4 7L8 3' stroke='%23C6A54B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
@@ -196,6 +209,7 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .how-step:hover{border-color:var(--border-strong);transform:translateY(-4px)}
 .how-step:hover::before{width:100%}
 .how-step-num{font-family:'Cinzel',serif;font-size:3.6rem;font-weight:400;color:rgba(198,165,75,.16);line-height:1;margin-bottom:1rem;display:block}
+.how-step-num::before{content:attr(data-n)}
 .how-step h3{font-family:'Cinzel',serif;font-weight:500;font-size:1.05rem;margin-bottom:.7rem;letter-spacing:.02em}
 .how-step p{color:var(--muted);font-size:.88rem;line-height:1.8}
 
@@ -238,7 +252,7 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 footer{padding:3rem 0;border-top:1px solid var(--border)}
 .footer-inner{display:flex;justify-content:space-between;align-items:center}
 .footer-copy{font-size:.75rem;color:var(--muted)}
-.footer-copy a{color:var(--gold);text-decoration:none}
+.footer-copy a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
 .footer-links{display:flex;gap:2rem;list-style:none}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;transition:color .3s}
 .footer-links a:hover{color:var(--gold)}
@@ -266,7 +280,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
-<canvas id="circuit-canvas"></canvas>
+<canvas id="circuit-canvas" aria-hidden="true"></canvas>
 
 <nav id="nav">
   <a href="#top" class="nav-logo" aria-label="Mainline Sleeves — back to top">
@@ -276,7 +290,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <ul class="nav-links">
     <li><a href="/studio">Work</a></li>
     <li><a href="#top">Originals</a></li>
-    <li><a href="/igrinder">iGrinder</a></li>
+    <li><a href="/caviot">Caviot Studio</a></li>
     <li><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a></li>
     <li><a href="/studio#about">About</a></li>
     <li><a href="/studio#contact" class="nav-btn">Contact</a></li>
@@ -284,9 +298,10 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="/studio">Work</a><a href="#top">Originals</a><a href="/igrinder">iGrinder</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
+  <a href="/studio">Work</a><a href="#top">Originals</a><a href="/caviot">Caviot Studio</a><a href="https://skatehubba.com" target="_blank" rel="noopener">SkateHubba ↗</a><a href="/studio#about">About</a><a href="/studio#contact">Contact</a>
 </div>
 
+<main>
 <!-- ============ HERO / LIVE CONFIGURATOR ============ -->
 <section class="studio" id="top">
   <div class="studio-grid">
@@ -320,7 +335,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 
       <div class="buybar">
         <span class="buybar-price"><span class="price-amt">$<span id="price">18</span></span><span class="price-label">Shipped</span></span>
-        <a href="#order" class="btn-primary">Order This Sleeve</a>
+        <a href="mailto:jason@designmainline.com?subject=Mainline%20Sleeve%20Order" class="btn-primary" id="orderBtn">Order This Sleeve</a>
       </div>
       <p class="price-note">Custom text included — no upcharge. <a href="#gallery" style="color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong)">See real prints ↓</a></p>
 
@@ -456,7 +471,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
         </div>
       </div>
       <div class="customize-note reveal reveal-delay-1">
-        <h4>For shops & teams</h4>
+        <h3>For shops & teams</h3>
         <p>Retail partners can stock ready-made designs or run an exclusive batch featuring their own shop logo and colors — something customers can't get in the original box.</p>
         <p>Email <a href="mailto:jason@designmainline.com">jason@designmainline.com</a> with what you're picturing. We respond within 24 hours.</p>
       </div>
@@ -487,7 +502,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
         </tbody>
       </table>
       <div class="care reveal reveal-delay-2">
-        <h4>Living with it</h4>
+        <h3>Living with it</h3>
         <ul>
           <li>Wipe with a dry or slightly damp cloth. Skip solvents and alcohol wipes — they'll dull the finish.</li>
           <li>Keep it out of a hot car. PLA+ softens around 60&nbsp;°C / 140&nbsp;°F, and a dashboard in July beats that.</li>
@@ -509,17 +524,17 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     </div>
     <div class="how-steps">
       <div class="how-step reveal reveal-delay-1">
-        <span class="how-step-num">01</span>
+        <span class="how-step-num" aria-hidden="true" data-n="01"></span>
         <h3>Design it live</h3>
         <p>Type your text, pick your colors and finish. What renders on screen is what gets printed — no mockup emails, no waiting on a proof.</p>
       </div>
       <div class="how-step reveal reveal-delay-2">
-        <span class="how-step-num">02</span>
+        <span class="how-step-num" aria-hidden="true" data-n="02"></span>
         <h3>We print it</h3>
         <p>Your sleeve goes on the plate the same day it's ordered. Printed alone at 0.12mm, then hand-checked before it's packed.</p>
       </div>
       <div class="how-step reveal reveal-delay-3">
-        <span class="how-step-num">03</span>
+        <span class="how-step-num" aria-hidden="true" data-n="03"></span>
         <h3>It shows up</h3>
         <p>Boxed and shipped in 3–5 business days with tracking. Slide it on and you're done.</p>
       </div>
@@ -556,7 +571,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <div class="container">
     <div class="final-cta-inner reveal">
       <h2>Make it <span class="gold">yours</span>.</h2>
-      <p>Type a name, pick a color, and it's on the printer today. Shipped in 3–5 days.</p>
+      <p>Type a name, pick a color, then hit Order — we'll confirm your device model and send a payment link. Shipped in 3–5 days.</p>
       <a href="#top" class="btn-primary">Design Your Sleeve</a>
     </div>
   </div>
@@ -568,9 +583,11 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <div class="studio-mini-label">Who Makes These</div>
     <h3>Built by <span class="gold">Design Mainline</span></h3>
     <p>Mainline Sleeves is made by <strong>Design Mainline LLC</strong> — a technology studio in Southern California doing smart environment design, custom software, and physical products. Same hands, same standard.</p>
-    <div class="studio-mini-other">Also from the studio: <a href="/igrinder">iGrinder — image to 3D STL</a> · <a href="/studio">The Studio</a></div>
+    <div class="studio-mini-other">Also from the studio: <a href="/caviot">Caviot Studio — design your own 3D prints</a> · <a href="/studio">The Studio</a></div>
   </div>
 </section>
+
+</main>
 
 <footer>
   <div class="container"><div class="footer-inner">
@@ -698,6 +715,17 @@ function render(){
   textGroup.style.filter=state.finish==='glow'?'url(#glowFx)':'none';
 
   fitText();
+  updateOrderLink();
+}
+
+/* order email carries the live configuration */
+const orderBtn=document.getElementById('orderBtn');
+function updateOrderLink(){
+  const body=['I\'d like to order a Mainline Sleeve:','',
+    'Text: '+(state.text||'(none)'),'Sleeve color: '+state.color.name,'Text color: '+state.ink.name,
+    'Finish: '+state.finish.charAt(0).toUpperCase()+state.finish.slice(1),'Price: $'+document.getElementById('price').textContent+' shipped','',
+    'Device model: ','Shipping address: '].join('\n');
+  orderBtn.href='mailto:jason@designmainline.com?subject='+encodeURIComponent('Mainline Sleeve Order'+(state.text?' — '+state.text:''))+'&body='+encodeURIComponent(body);
 }
 
 /* auto-scale text to the sleeve face (max width 176 of a 220 body) */
@@ -719,33 +747,30 @@ if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitText)}
 render();
 
 /* ================= GALLERY ================= */
-/* Drop real photos at these paths and they replace the placeholders automatically.
-   Recommended: 1200x1200 square, WebP, under 200KB each. */
+/* Recommended: 1200x1200 square, WebP, under 200KB each. */
 const SHOTS=[
   {src:'/assets/sleeves/01.webp',cap:'Fan Tribute · Engraved Wordmark'},
   {src:'/assets/sleeves/02.webp',cap:'Skate Culture Tribute · Neon Green'},
-  {src:'/assets/sleeves/03.webp',cap:'"SkateHubba" · Custom Artwork, Orange'},
-  {src:'/assets/sleeves/04.webp',cap:'"MAINLINE" · Gold / Black'},
-  {src:'/assets/sleeves/05.webp',cap:'"RUBY" · Blood Orange / Bone'},
-  {src:'/assets/sleeves/06.webp',cap:'"304" · Gunmetal / Copper'}
+  {src:'/assets/sleeves/03.webp',cap:'"SkateHubba" · Custom Artwork, Orange'}
+  /* add the photo file first, then uncomment:
+  ,{src:'/assets/sleeves/04.webp',cap:'"MAINLINE" · Gold / Black'}
+  ,{src:'/assets/sleeves/05.webp',cap:'"RUBY" · Blood Orange / Bone'}
+  ,{src:'/assets/sleeves/06.webp',cap:'"304" · Gunmetal / Copper'} */
 ];
 const grid=document.getElementById('gallery-grid');
 SHOTS.forEach((shot,i)=>{
   const b=document.createElement('button');
   b.type='button';b.className='shot empty';
-  b.setAttribute('aria-label',shot.cap);
-  const slot=String(i+1).padStart(2,'0');
+  b.setAttribute('aria-label','View photo: '+shot.cap);
   b.innerHTML=
-    '<img alt="Custom 3D-printed sleeve — '+shot.cap.replace(/"/g,'&quot;')+'" loading="lazy" width="1200" height="1200">'+
+    '<img alt="" loading="lazy" width="1200" height="1200">'+
     '<span class="shot-ph">'+
       '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>'+
-      '<span class="shot-ph-slot">Photo Slot '+slot+'</span>'+
-      '<span class="shot-ph-hint">/assets/sleeves/'+slot+'.webp<br>1200 &times; 1200</span>'+
     '</span>'+
     '<span class="shot-cap">'+shot.cap+'</span>';
   const img=b.querySelector('img');
   img.addEventListener('load',()=>{b.classList.remove('empty')});
-  img.addEventListener('error',()=>{b.classList.add('empty')});
+  img.addEventListener('error',()=>b.remove());
   b.addEventListener('click',()=>{if(!b.classList.contains('empty'))openLightbox(shot.src,shot.cap)});
   grid.appendChild(b);
   img.src=shot.src;
@@ -766,7 +791,11 @@ function closeLightbox(){
 }
 lbClose.addEventListener('click',closeLightbox);
 lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('open'))closeLightbox()});
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='Tab'){e.preventDefault();lbClose.focus()}
+});
 
 /* ================= BACKGROUND CIRCUIT ================= */
 const canvas=document.getElementById('circuit-canvas'),ctx=canvas.getContext('2d');let w,h;
