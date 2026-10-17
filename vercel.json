@@ -4,41 +4,106 @@
   "installCommand": null,
   "outputDirectory": null,
   "redirects": [
-    { "source": "/igrinder", "destination": "/caviot", "permanent": true },
-    { "source": "/igrinder.html", "destination": "/caviot", "permanent": true },
-    { "source": "/tool", "destination": "/forge", "permanent": true },
-    { "source": "/tool.html", "destination": "/forge", "permanent": true }
+    {
+      "source": "/igrinder",
+      "destination": "/caviot",
+      "permanent": true
+    },
+    {
+      "source": "/igrinder.html",
+      "destination": "/caviot",
+      "permanent": true
+    },
+    {
+      "source": "/tool",
+      "destination": "/forge",
+      "permanent": true
+    },
+    {
+      "source": "/tool.html",
+      "destination": "/forge",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/studio", "destination": "/studio.html" },
-    { "source": "/sleeves", "destination": "/sleeves.html" },
-    { "source": "/originals", "destination": "/sleeves.html" },
-    { "source": "/caviot", "destination": "/caviot.html" }
+    {
+      "source": "/caviot/privacy",
+      "destination": "/caviot/privacy.html"
+    },
+    {
+      "source": "/caviot/support",
+      "destination": "/caviot/support.html"
+    },
+    {
+      "source": "/studio",
+      "destination": "/studio.html"
+    },
+    {
+      "source": "/sleeves",
+      "destination": "/sleeves.html"
+    },
+    {
+      "source": "/originals",
+      "destination": "/sleeves.html"
+    },
+    {
+      "source": "/caviot",
+      "destination": "/caviot.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
     },
     {
       "source": "/forge/sw.js",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
     },
     {
       "source": "/forge",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
     },
     {
       "source": "/forge/(|index.html|manifest.webmanifest)",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
     },
     {
       "source": "/forge/manifest.webmanifest",
-      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        }
+      ]
     }
   ]
 }
