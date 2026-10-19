@@ -3,6 +3,7 @@
   "buildCommand": null,
   "installCommand": null,
   "outputDirectory": null,
+  "ignoreCommand": "bash scripts/vercel-ignore.sh",
   "redirects": [
     {
       "source": "/igrinder",
