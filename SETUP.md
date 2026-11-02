@@ -30,7 +30,8 @@ Caviot Studio is currently **free** (launch edition). To charge later, add a che
 
 ## Adding photos
 
-- **Homepage slides:** add `assets/slides/02-caviot-studio.jpg`, `03-skatehubba.jpg`, `04-studio.jpg` (≈1600px wide), then un-comment the matching `<img>` line in `index.html`.
+- **Homepage slides:** the Caviot and SkateHubba slides have images (`assets/caviot/desktop.webp`, `assets/slides/03-skatehubba.webp`). For the Studio slide, add `assets/slides/04-studio.jpg` (≈1600px wide), then un-comment its `<img>` line in `index.html`.
+- **Store badges:** `assets/caviot/get-it-on-google-play.png` is Google's official English badge with only its transparent padding trimmed. Don't recolour or edit it, keep it at least as large as any other store badge, and keep the Google Play legal line in the footer. Add an App Store badge for Caviot only after Apple approves 1.0, using Apple's official badge artwork.
 - **Sleeves gallery:** add `assets/sleeves/04.webp`–`06.webp` (1200×1200), then un-comment those entries in the `SHOTS` list in `sleeves.html`.
 
 ## Ordering (Mainline Sleeves)
