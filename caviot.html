@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caviot Studio — Turn Artwork Into 3D-Printable Sleeves &amp; Reliefs · Free</title>
-<meta name="description" content="Caviot Studio turns artwork, lettering and patterns into custom 3D-printable sleeves and reliefs, right in your browser. Free launch edition: no account, no payment, export STL or OBJ.">
+<title>Caviot Studio — It Actually Wraps: Artwork &amp; Lettering on Curved 3D Prints · Free</title>
+<meta name="description" content="Caviot Studio wraps artwork, lettering and patterns around curved 3D-printable shapes, right in your browser. Free launch edition: no account, no payment, export STL or OBJ.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Caviot Studio — Your Design. A Physical Thing.">
-<meta property="og:description" content="Turn artwork, lettering and patterns into 3D-printable sleeves and reliefs. Free, in your browser. Export STL or OBJ.">
+<meta property="og:description" content="It actually wraps: artwork, lettering and patterns around curved 3D-printable shapes. Free, in your browser. Export STL or OBJ.">
 <meta property="og:site_name" content="Design Mainline">
 <meta name="theme-color" content="#060606">
 <link rel="canonical" href="https://www.designmainline.com/caviot">
@@ -107,6 +107,9 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
 .forge-trust{display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .forge-trust span{display:inline-flex;align-items:center;gap:.5rem}
 .forge-trust span::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.6}
+.forge-render{flex-direction:column;gap:.9rem;margin:0}
+.forge-render img{width:100%;max-width:400px;height:auto;border:1px solid var(--border-strong)}
+.forge-render figcaption{font-size:.72rem;letter-spacing:.06em;color:var(--muted);text-align:center;max-width:400px}
 .forge-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:440px;opacity:0;animation:fadeUp .9s ease .45s forwards}
 .forge-stage{position:relative;width:100%;max-width:460px;aspect-ratio:1/1;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:center}
 .forge-tile{position:relative;aspect-ratio:1/1;background:var(--card);border:1px solid var(--border-strong);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.2rem;overflow:hidden}
@@ -132,6 +135,8 @@ nav.scrolled{padding:.8rem 3rem;background:rgba(6,6,6,.92);backdrop-filter:blur(
   .forge-actions{justify-content:center}
   .forge-trust{justify-content:center}
   .forge-visual{order:-1;min-height:340px}
+  .forge-render{order:0;min-height:0}
+  .forge-render img{max-width:280px}
   .forge-stage{max-width:360px}
 }
 
@@ -187,6 +192,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
 .pricing-list li{padding:.55rem 0;color:var(--white);font-size:.88rem;display:flex;align-items:center;gap:.8rem;font-weight:300}
 .pricing-list li::before{content:'';width:14px;height:14px;border-radius:50%;background:rgba(198,165,75,.12);color:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600;flex-shrink:0;background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5L4 7L8 3' stroke='%23C6A54B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center}
 .pricing-card .btn-primary{width:100%;text-align:center;padding:1.05rem;font-size:.82rem;border:none;letter-spacing:.18em}
+.pricing-own{margin-top:.9rem;font-size:.8rem;color:var(--muted)}
 .pricing-foot{margin-top:1.1rem;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 .pricing-vs{display:flex;justify-content:center;gap:2rem;margin-top:3rem;font-size:.78rem;color:var(--muted);flex-wrap:wrap;text-align:center}
 .pricing-vs-item{padding:.4rem 0}
@@ -258,8 +264,8 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
   <div class="forge-grid">
     <div class="forge-content">
       <div class="forge-eyebrow"><span class="badge-dot"></span> Free Launch Edition · Live Now</div>
-      <h1 class="forge-title">Forge thoughts <br>into <span class="gold">reality</span>.</h1>
-      <p class="forge-desc"><strong>Caviot Studio</strong> turns artwork, lettering and patterns into custom 3D-printable sleeves and reliefs — right in your browser. Shape it in a live 3D workspace, then export it for your printer.</p>
+      <h1 class="forge-title">It actually <span class="gold">wraps</span>.</h1>
+      <p class="forge-desc">Slicer emboss tools project a logo onto a curve, so the ends stretch or slide off. <strong>Caviot Studio</strong> wraps your artwork and lettering around the surface itself — right in your browser — then exports a file ready for your slicer.</p>
       <div class="forge-pricing">
         <span><span class="forge-price-amt">Free</span><span class="forge-price-label">launch edition</span></span>
         <span class="forge-price-sep">|</span>
@@ -271,31 +277,15 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
       </div>
       <p class="forge-cta-note">Design in your browser, download your STL. Nothing to install.</p>
       <div class="forge-trust">
-        <span>Browser-based · no install</span>
-        <span>Artwork stays on your device</span>
+        <span>Runs on your device</span>
+        <span>Checked for open edges before you download</span>
         <span>STL + OBJ in millimeters</span>
       </div>
     </div>
-    <div class="forge-visual" aria-hidden="true">
-      <div class="forge-stage">
-        <div class="forge-tile input">
-          <span class="forge-tile-label">Input · 2D</span>
-          <span class="forge-tile-badge">PNG / JPG</span>
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="2" fill="none"/><circle cx="50" cy="12" r="2.4" fill="#C6A54B"/><circle cx="12" cy="78" r="2.4" fill="#C6A54B"/><circle cx="88" cy="78" r="2.4" fill="#C6A54B"/></svg>
-        </div>
-        <div class="forge-tile output">
-          <span class="forge-tile-label">Output · 3D</span>
-          <span class="forge-tile-badge">.STL</span>
-          <div class="forge-out-3d">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.4" fill="none"/></svg>
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.6" fill="none"/></svg>
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 12L88 78H12L50 12Z" stroke="#C6A54B" stroke-width="1.8" fill="none"/><line x1="50" y1="12" x2="58" y2="4" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="88" y1="78" x2="96" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/><line x1="12" y1="78" x2="20" y2="70" stroke="#C6A54B" stroke-width="1" opacity=".5"/></svg>
-          </div>
-        </div>
-        <div class="forge-arrow">→</div>
-        <div class="forge-meta"><span>2D Image</span><span><b>Extruded</b> · STL</span></div>
-      </div>
-    </div>
+    <figure class="forge-visual forge-render">
+      <img src="/assets/caviot/wrap-tube.webp" width="640" height="820" alt="The word CAVIOT in raised orange lettering wrapped around a plain 3D tube; the last letter curves away around the side." fetchpriority="high">
+      <figcaption>Rendered in Caviot Studio: lettering wrapped around a 32&nbsp;mm tube, not projected onto it.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -369,8 +359,8 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
     <div class="why-grid">
       <div class="why-card reveal reveal-delay-1">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <h3>Browser-based</h3>
-        <p>No install, no signup. Runs in a modern browser on desktop or mobile — no plugins.</p>
+        <h3>Runs on your device</h3>
+        <p>No credits, no queue, no server timeouts. Nothing to install, and it keeps working offline after your first visit.</p>
       </div>
       <div class="why-card reveal reveal-delay-2">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
@@ -385,7 +375,7 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
       <div class="why-card reveal reveal-delay-1">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div>
         <h3>No watermark, ever</h3>
-        <p>Clean STL and OBJ exports in millimeters for Cura, PrusaSlicer, Bambu Studio and more.</p>
+        <p>Clean STL and OBJ exports in millimeters, checked for open edges before you download. Ready for Cura, PrusaSlicer, Bambu Studio and more.</p>
       </div>
       <div class="why-card reveal reveal-delay-2">
         <div class="why-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7"/><circle cx="12" cy="12" r="3"/></svg></div>
@@ -413,13 +403,14 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
       <ul class="pricing-list">
         <li>Image and text reliefs</li>
         <li>Built-in patterns, plus your own fonts</li>
-        <li>Half sleeve, full sleeve, curved relief or flat plate</li>
+        <li>Half wrap, full wrap, curved relief or flat plate</li>
         <li>Fit ring exports</li>
         <li>STL and OBJ exports</li>
         <li>Portable project files</li>
       </ul>
       <a href="/forge" class="btn-primary">Open Caviot Studio</a>
       <div class="pricing-foot">Processed on your device · No uploads</div>
+      <p class="pricing-own">You own what you make. Use artwork you have the rights to.</p>
     </div>
   </div>
 </section>
@@ -456,6 +447,10 @@ footer{padding:3rem 0;border-top:1px solid var(--border)}
       <details class="faq-item reveal reveal-delay-1">
         <summary>Does my artwork leave my browser?</summary>
         <div class="faq-body">No. All design processing happens on your device. Settings and uploaded fonts stay in this browser; artwork stays in memory until you save a project file. There is no cloud backup.</div>
+      </details>
+      <details class="faq-item reveal reveal-delay-1">
+        <summary>Who owns what I make?</summary>
+        <div class="faq-body"><strong>You do.</strong> Use artwork you have the rights to: your own designs, or artwork you're licensed to use. Brand logos and characters you don't own aren't yours to print or sell.</div>
       </details>
       <details class="faq-item reveal reveal-delay-1">
         <summary>Custom templates or bigger projects?</summary>
